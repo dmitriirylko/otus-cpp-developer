@@ -1,3 +1,0 @@
-C:/Develop/OtusCourse/Code/otus-cpp-developer/hw1-build-test-deploy/build/CMakeFiles/helloworld_cli.dir
-C:/Develop/OtusCourse/Code/otus-cpp-developer/hw1-build-test-deploy/build/CMakeFiles/edit_cache.dir
-C:/Develop/OtusCourse/Code/otus-cpp-developer/hw1-build-test-deploy/build/CMakeFiles/rebuild_cache.dir

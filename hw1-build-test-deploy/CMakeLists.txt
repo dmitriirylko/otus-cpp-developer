@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.15)
 
 set(PATCH_VERSION "1" CACHE INTERNAL "Patch version")
 set(PROJECT_VERSION 0.0.${PATCH_VERSION})
@@ -23,10 +23,12 @@ include_directories(${CMAKE_BINARY_DIR})
 target_link_libraries(helloworld_cli PRIVATE helloworld)
 
 if(WITH_BOOST_TEST)
-    set(Boost_ROOT "C:/boost_1_85_0/")
-    set(Boost_USE_STATIC_LIBS        ON)
-    set(Boost_USE_MULTITHREADED      ON)
-    set(Boost_USE_STATIC_RUNTIME    OFF)
+    if(WIN32)
+        set(Boost_ROOT "C:/boost_1_85_0/")
+        set(Boost_USE_STATIC_LIBS        ON)
+        set(Boost_USE_MULTITHREADED      ON)
+        set(Boost_USE_STATIC_RUNTIME    OFF)
+    endif()
     
     find_package(Boost COMPONENTS unit_test_framework REQUIRED)
 
@@ -40,4 +42,20 @@ if(WITH_BOOST_TEST)
     include_directories(${Boost_INCLUDE_DIRS}) 
 
     target_link_libraries(test_version ${Boost_LIBRARIES} helloworld)
+endif()
+
+if(LINUX)
+# -- install command was introduced in 3.15 version of cmake
+# -- we can use sudo make install from build folder
+    install(TARGETS helloworld_cli RUNTIME DESTINATION bin)
+    set(CPACK_GENERATOR DEB)
+    set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
+    set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
+    set(CPACK_PACKAGE_CONTACT dmitriirylko@gmail.com)
+    include(CPack)
+endif()
+
+if(WITH_BOOST_TEST)
+    enable_testing()
+    add_test(test_version test_version)
 endif()

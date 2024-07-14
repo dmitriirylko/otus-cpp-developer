@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/helloworld_cli.dir/main.cpp.o CMakeFiles/helloworld_cli.dir/lib.cpp.o -o helloworld_cli  libhelloworld.a 

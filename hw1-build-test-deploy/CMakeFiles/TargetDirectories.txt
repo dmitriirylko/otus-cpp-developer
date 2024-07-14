@@ -1,0 +1,9 @@
+/home/dmitriirylko/Develop/VSCodeProjects/otus-cpp-developer/hw1-build-test-deploy/CMakeFiles/helloworld_cli.dir
+/home/dmitriirylko/Develop/VSCodeProjects/otus-cpp-developer/hw1-build-test-deploy/CMakeFiles/helloworld.dir
+/home/dmitriirylko/Develop/VSCodeProjects/otus-cpp-developer/hw1-build-test-deploy/CMakeFiles/test_version.dir
+/home/dmitriirylko/Develop/VSCodeProjects/otus-cpp-developer/hw1-build-test-deploy/CMakeFiles/edit_cache.dir
+/home/dmitriirylko/Develop/VSCodeProjects/otus-cpp-developer/hw1-build-test-deploy/CMakeFiles/rebuild_cache.dir
+/home/dmitriirylko/Develop/VSCodeProjects/otus-cpp-developer/hw1-build-test-deploy/CMakeFiles/list_install_components.dir
+/home/dmitriirylko/Develop/VSCodeProjects/otus-cpp-developer/hw1-build-test-deploy/CMakeFiles/install.dir
+/home/dmitriirylko/Develop/VSCodeProjects/otus-cpp-developer/hw1-build-test-deploy/CMakeFiles/install/local.dir
+/home/dmitriirylko/Develop/VSCodeProjects/otus-cpp-developer/hw1-build-test-deploy/CMakeFiles/install/strip.dir

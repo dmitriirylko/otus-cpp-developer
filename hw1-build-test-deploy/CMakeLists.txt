@@ -1,7 +1,25 @@
 cmake_minimum_required(VERSION 3.15)
 
-set(PATCH_VERSION "1" CACHE INTERNAL "Patch version")
-set(PROJECT_VERSION 0.0.${PATCH_VERSION})
+find_package(Git)
+
+if(GIT_EXECUTABLE)
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} describe --tags
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    OUTPUT_VARIABLE PROJECT_VERSION
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+endif()
+
+if(PROJECT_VERSION STREQUAL "")
+  set(PROJECT_VERSION 0.0.0)
+  message(WARNING "Failed to determine version from Git tags. Using default version \"${PROJECT_VERSION}\".")
+endif()
+
+message("Version is \"${PROJECT_VERSION}\".")
+
+# set(PATCH_VERSION "1" CACHE INTERNAL "Patch version")
+# set(PROJECT_VERSION 0.0.${PATCH_VERSION})
 
 project(helloworld VERSION ${PROJECT_VERSION})
 

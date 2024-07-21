@@ -1,6 +1,6 @@
 #include "lib.h"
 
-int version()
+std::string version()
 {
-    return PROJECT_VERSION;
+    return "PROJECT_VERSION";
 }

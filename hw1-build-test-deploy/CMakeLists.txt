@@ -21,7 +21,8 @@ message("Version is \"${PROJECT_VERSION}\".")
 # set(PATCH_VERSION "1" CACHE INTERNAL "Patch version")
 # set(PROJECT_VERSION 0.0.${PATCH_VERSION})
 
-project(helloworld VERSION ${PROJECT_VERSION})
+# project(helloworld VERSION ${PROJECT_VERSION})
+project(helloworld)
 
 option(WITH_BOOST_TEST "Whether to build Boost test" ON)
 

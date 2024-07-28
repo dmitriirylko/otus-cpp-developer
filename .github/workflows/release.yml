@@ -8,7 +8,7 @@ on:
 jobs:
   helloworld:
     name: HelloWorld
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     permissions:
       contents: write
       pull-requests: write
@@ -56,6 +56,7 @@ jobs:
       - run: sudo apt-get update && sudo apt-get install libgtest-dev libgmock-dev && sudo apt-get install libtbb-dev
       - run: cmake ./hw2-ip-filtering -DWITH_GTEST=ON
       - run: cmake --build .
+      - run: cmake --build . --target test
       - run: cmake --build . --target package
       - name: Create Release
         id: create_release

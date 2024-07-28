@@ -6,7 +6,8 @@ on:
       - '*'
 
 jobs:
-  build:
+  helloworld:
+    name: HelloWorld
     runs-on: ubuntu-18.04
     permissions:
       contents: write
@@ -41,9 +42,8 @@ jobs:
           asset_path: ./helloworld-${{ github.ref_name }}-Linux.deb
           asset_name: helloworld-${{ github.ref_name }}-Linux.deb
           asset_content_type: application/vnd.debian.binary-package
-          
-jobs:
-  build:
+  ip_filter:
+    name: Ip Filter
     runs-on: ubuntu-20.04
     permissions:
       contents: write

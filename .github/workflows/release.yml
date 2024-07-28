@@ -9,6 +9,8 @@ jobs:
   helloworld:
     name: HelloWorld
     runs-on: ubuntu-20.04
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
     permissions:
       contents: write
       pull-requests: write

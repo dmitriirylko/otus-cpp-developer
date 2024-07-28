@@ -1,28 +1,28 @@
 cmake_minimum_required(VERSION 3.15)
 
-# find_package(Git)
+find_package(Git)
 
-# if(GIT_EXECUTABLE)
-#   execute_process(
-#     COMMAND ${GIT_EXECUTABLE} describe --tags
-#     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-#     OUTPUT_VARIABLE PROJECT_VERSION
-#     OUTPUT_STRIP_TRAILING_WHITESPACE
-#     )
-# endif()
+if(GIT_EXECUTABLE)
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} describe --tags
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    OUTPUT_VARIABLE PROJECT_VERSION
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+endif()
 
-# if(PROJECT_VERSION STREQUAL "")
-#   set(PROJECT_VERSION 0.0.0)
-#   message(WARNING "Failed to determine version from Git tags. Using default version \"${PROJECT_VERSION}\".")
-# endif()
+if(PROJECT_VERSION STREQUAL "")
+  set(PROJECT_VERSION 0.0.0)
+  message(WARNING "Failed to determine version from Git tags. Using default version \"${PROJECT_VERSION}\".")
+endif()
 
-# message("Version is \"${PROJECT_VERSION}\".")
+message("Version is \"${PROJECT_VERSION}\".")
 
-# project(ip_filtering VERSION ${PROJECT_VERSION})
+# project(ip_filter VERSION ${PROJECT_VERSION})
 
 project(ip_filter)
 
-option(WITH_BOOST_TEST "Whether to build Boost test" ON)
+option(WITH_GTEST "Whether to build Boost test" ON)
 
 # configure_file(version.h.in version.h)
 
@@ -43,27 +43,20 @@ set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES
 
 # target_link_libraries(helloworld_cli PRIVATE helloworld)
 
-# if(WITH_BOOST_TEST)
-#     if(WIN32)
-#         set(Boost_ROOT "C:/boost_1_85_0/")
-#         set(Boost_USE_STATIC_LIBS        ON)
-#         set(Boost_USE_MULTITHREADED      ON)
-#         set(Boost_USE_STATIC_RUNTIME    OFF)
-#     endif()
-    
-#     find_package(Boost COMPONENTS unit_test_framework REQUIRED)
+if(WITH_GTEST)
+    find_package(GTest)
 
-#     add_executable(test_version test_version.cpp)
+    add_executable(test_ip_filter test_ip_filter.cpp)
 
-#     set_target_properties(test_version PROPERTIES
-#         CXX_STANDARD 11
-#         CXX_STANDARD_REQUIRED ON
-#     )
+    set_target_properties(test_ip_filter PROPERTIES
+        CXX_STANDARD 11
+        CXX_STANDARD_REQUIRED ON
+    )
 
-#     include_directories(${Boost_INCLUDE_DIRS}) 
+    include_directories(${GTEST_INCLUDE_DIRS}) 
 
-#     target_link_libraries(test_version ${Boost_LIBRARIES} helloworld)
-# endif()
+    target_link_libraries(test_ip_filter PRIVATE ${GTEST_BOTH_LIBRARIES})
+endif()
 
 # if(LINUX)
 # # -- install command was introduced in 3.15 version of cmake

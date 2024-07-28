@@ -4,10 +4,9 @@
 #include <string>
 #include <vector>
 
+#include "main.h"
 #include "reader.h"
 #include "ipaddrpool.h"
-
-constexpr const char *filePathDefault = "./../ip_filter.tsv";
 
 int main(int argc, char const *argv[])
 {
@@ -15,7 +14,7 @@ int main(int argc, char const *argv[])
     argc == 1 ? filePath = filePathDefault : filePath = argv[1];
     try
     {
-        Reader reader(filePathDefault);
+        Reader reader(filePath);
         auto ipPoolSorted = reader.getPool();
         ipPoolSorted.sortDescending();
         ipPoolSorted.print();

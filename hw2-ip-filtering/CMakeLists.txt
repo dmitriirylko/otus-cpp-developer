@@ -18,8 +18,7 @@ endif()
 
 message("Version is \"${PROJECT_VERSION}\".")
 
-# project(ip_filter VERSION ${PROJECT_VERSION})
-project(ip_filter)
+project(ip_filter VERSION ${PROJECT_VERSION})
 
 option(WITH_GTEST "Whether to build Boost test" ON)
 

@@ -18,7 +18,8 @@ endif()
 
 message("Version is \"${PROJECT_VERSION}\".")
 
-project(ip_filter VERSION ${PROJECT_VERSION})
+# project(ip_filter VERSION ${PROJECT_VERSION})
+project(ip_filter)
 
 option(WITH_GTEST "Whether to build Boost test" ON)
 
@@ -29,7 +30,7 @@ add_executable(${CMAKE_PROJECT_NAME}
 )
 
 set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES
-    CXX_STANDARD 17
+    CXX_STANDARD 20
     CXX_STANDARD_REQUIRED ON
 )
 

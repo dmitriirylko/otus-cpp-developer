@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 
+#include "linearallocator.h"
+
 template<typename T>
 struct SimpleAlloc
 {
@@ -72,7 +74,6 @@ struct LoggingAlloctor
             throw std::bad_alloc();
         }
         return reinterpret_cast<T*>(p);
-
     }
     void deallocate(T *p, std::size_t n)
     {
@@ -83,31 +84,33 @@ struct LoggingAlloctor
 
 int main()
 {
-    // std::vector<int, SimpleAlloc<int>> vec;
-    // vec.push_back(52);
-    // vec.push_back(25);
-    // std::cout << "SimpleAlloc values:" << std::endl;
-    // std::cout << vec[0] << "\t" << vec[1] << std::endl;
-
-    // constexpr int sz{100000};
-    // Arena myArena1{new char[sz], sz};
-    // Arena myArena2{new char[10 * sz], 10 * sz};
-    // std::vector<int, MyAlloc<int>> vec1{MyAlloc<int>{myArena1}};
-    // vec1.push_back(52);
-    // vec1.push_back(522);
-    // vec1.pop_back();
-    // vec1.push_back(52);
-    // vec1.push_back(13);
-    // std::cout << "MyAlloc values:" << std::endl;
-    // std::cout << vec1[0] << "\t" << vec1[1] << "\t" << vec1[2] << std::endl;
-    // std::cout << myArena1.p << std::endl;
-    // std::cout << &vec1[0] << "\t" << &vec1[1] << "\t" << &vec1[2] << std::endl;
-    auto vec = std::vector<int, LoggingAlloctor<int>>{};
-    for(int i = 0; i < 5; ++i)
+    try
     {
-        std::cout << "vec size = " << vec.size() << std::endl;
-        vec.emplace_back(i);
+        // LinearAlloctor<int> linearAllocator(std::size_t(10));
+        // std::vector<int, LinearAlloctor<int>> vec{std::move(linearAllocator)};
+        std::vector<int, LinearAlloctor<int>> vec{std::move(LinearAlloctor<int>(std::size_t(10)))};
+        std::cout << "Initial cap: " << vec.capacity() << std::endl;
+        vec.push_back(11);
+        std::cout << "Cap: " << vec.capacity() << std::endl;
+        vec.push_back(22);
+        std::cout << "Cap: " << vec.capacity() << std::endl;
+        vec.push_back(33);
+        std::cout << "Cap: " << vec.capacity() << std::endl;
+        vec.push_back(44);
+        std::cout << "Cap: " << vec.capacity() << std::endl;
+        vec.pop_back();
+        vec.push_back(55);
+        std::cout << "Cap: " << vec.capacity() << std::endl;
+        std::cout << "Vec values:" << std::endl;
+        for(int value : vec)
+        {
+            std::cout << value << "\t";
+        }
         std::cout << std::endl;
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << std::endl;
     }
     return 0;
 }

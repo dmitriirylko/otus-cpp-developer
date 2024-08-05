@@ -18,16 +18,18 @@ endif()
 
 message("Version is \"${PROJECT_VERSION}\".")
 
-project(allocator VERSION ${PROJECT_VERSION})
+# project(allocator VERSION ${PROJECT_VERSION})
+project(allocator)
 
 option(WITH_GTEST "Whether to build Google test" ON)
 
 add_executable(${CMAKE_PROJECT_NAME}
     main.cpp
+    linearallocator.cpp
 )
 
 set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES
-    CXX_STANDARD 17
+    CXX_STANDARD 20
     CXX_STANDARD_REQUIRED ON
 )
 

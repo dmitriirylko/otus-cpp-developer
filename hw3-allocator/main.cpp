@@ -1,7 +1,17 @@
 #include <iostream>
 #include <vector>
+#include <map>
 
 #include "linearallocator.h"
+
+int factorial(int n)
+{
+    if(n == 0 || n == 1)
+    {
+        return 1;
+    }
+    return n * factorial(n - 1);
+}
 
 template<typename T>
 struct SimpleAlloc
@@ -86,27 +96,38 @@ int main()
 {
     try
     {
-        // LinearAlloctor<int> linearAllocator(std::size_t(10));
-        // std::vector<int, LinearAlloctor<int>> vec{std::move(linearAllocator)};
-        std::vector<int, LinearAlloctor<int>> vec{std::move(LinearAlloctor<int>(std::size_t(10)))};
-        std::cout << "Initial cap: " << vec.capacity() << std::endl;
-        vec.push_back(11);
-        std::cout << "Cap: " << vec.capacity() << std::endl;
-        vec.push_back(22);
-        std::cout << "Cap: " << vec.capacity() << std::endl;
-        vec.push_back(33);
-        std::cout << "Cap: " << vec.capacity() << std::endl;
-        vec.push_back(44);
-        std::cout << "Cap: " << vec.capacity() << std::endl;
-        vec.pop_back();
-        vec.push_back(55);
-        std::cout << "Cap: " << vec.capacity() << std::endl;
-        std::cout << "Vec values:" << std::endl;
-        for(int value : vec)
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // std::vector<int, LinearAlloctor<int>> vec{LinearAlloctor<int>(std::size_t(10))};
+        // std::cout << "Initial cap: " << vec.capacity() << std::endl;
+        // vec.push_back(11);
+        // std::cout << "Cap: " << vec.capacity() << std::endl;
+        // vec.push_back(22);
+        // std::cout << "Cap: " << vec.capacity() << std::endl;
+        // vec.push_back(33);
+        // std::cout << "Cap: " << vec.capacity() << std::endl;
+        // vec.push_back(44);
+        // std::cout << "Cap: " << vec.capacity() << std::endl;
+        // // vec.push_back(55);
+        // // std::cout << "Cap: " << vec.capacity() << std::endl;
+        // std::cout << "Vec values:" << std::endl;
+        // for(int value : vec)
+        // {
+        //     std::cout << value << "\t";
+        // }
+        // std::cout << std::endl;
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////
+        std::map<int, int> map;
+        for(int i = 0; i < 10; ++i)
         {
-            std::cout << value << "\t";
+            map[i] = factorial(i);
         }
-        std::cout << std::endl;
+        std::map<int, int, std::less<int>, LinearAlloctor<std::pair<const int, int>, 10>> map1{};
+        for(int i = 0; i < 11; ++i)
+        {
+            map1.emplace(i, factorial(i));
+        }
+        int a = 1;
     }
     catch(const std::exception& e)
     {

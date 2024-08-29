@@ -37,7 +37,7 @@ set_target_properties(allocatorBenchmark PROPERTIES
 if(LINUX)
 # -- install command was introduced in 3.15 version of cmake
 # -- we can use sudo make install from build folder
-    install(TARGETS ip_filter RUNTIME DESTINATION bin)
+    install(TARGETS allocator RUNTIME DESTINATION bin)
     set(CPACK_GENERATOR DEB)
     set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
     set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")

@@ -15,7 +15,7 @@ int main()
     }
     auto t2 = std::chrono::high_resolution_clock::now();
     auto dt21 = std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count();
-    std::cout << "Default allocator time = " << dt21 << std::endl;
+    std::cout << "Default allocator time = " << dt21 << " ns" << std::endl;
 
     std::list<int, PoolAllocator<int, iterNum>> defaultListCustomAlloc;
     auto t3 = std::chrono::high_resolution_clock::now();
@@ -25,7 +25,7 @@ int main()
     }
     auto t4 = std::chrono::high_resolution_clock::now();
     auto dt43 = std::chrono::duration_cast<std::chrono::nanoseconds>(t4 - t3).count();
-    std::cout << "Custom allocator time = " << dt43 << std::endl;
+    std::cout << "Custom allocator time = " << dt43 << " ns" << std::endl;
     
     double relDiff = 100.0 * ((double)(dt21 - dt43)) / ((double)(dt21));
     std::cout << "Relative difference = " << relDiff << "%" << std::endl;

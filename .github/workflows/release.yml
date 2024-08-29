@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-20.04
+    compiler: gcc
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
     permissions:

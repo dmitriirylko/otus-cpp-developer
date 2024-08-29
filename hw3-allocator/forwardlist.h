@@ -2,22 +2,25 @@
 
 #include <cassert>
 
+template<typename T>
+struct Node
+{
+    Node(T item) : data{std::move(item)}
+    {}
+    Node *next = nullptr;
+    T data;
+};
+
 template<typename T, typename Alloc = std::allocator<T>>
 class ForwardList
 {
 private:
-    struct Node
-    {
-        Node(T item) : data{std::move(item)}
-        {}
-        Node *next = nullptr;
-        T data;
-    };
 
-    Node *m_head = nullptr;
-    Node *m_tail = nullptr;
+    Node<T> *m_head = nullptr;
+    Node<T> *m_tail = nullptr;
 
-    using AllocNode = typename std::allocator_traits<Alloc>::rebind_alloc<Node>;
+    using AllocNode = typename std::allocator_traits<Alloc>::rebind_alloc<Node<T>>;
+    // using AllocNode = typename Alloc::rebind<Node>;
     AllocNode alloc;
 
 public:
@@ -34,16 +37,16 @@ public:
     private:
         friend class ForwardList;
         
-        explicit ForwardListConstIterator(const Node *ptr) noexcept :
+        explicit ForwardListConstIterator(const Node<T> *ptr) noexcept :
             m_pCurrentNode{ptr}
         {}
 
-        const Node* get() const noexcept
+        const Node<T>* get() const noexcept
         {
             return m_pCurrentNode;
         }
         
-        const Node *m_pCurrentNode;
+        const Node<T> *m_pCurrentNode;
 
     public:
         using difference_type = ForwardList::difference_type;
@@ -89,16 +92,16 @@ public:
     private:
         friend class ForwardList;
         
-        explicit ForwardListIterator(Node *ptr) noexcept :
+        explicit ForwardListIterator(Node<T> *ptr) noexcept :
             m_pCurrentNode{ptr}
         {}
         
-        Node* get() const noexcept
+        Node<T>* get() const noexcept
         {
             return m_pCurrentNode;
         }
         
-        Node *m_pCurrentNode;
+        Node<T> *m_pCurrentNode;
 
     public:
         using difference_type = ForwardList::difference_type;
@@ -148,7 +151,7 @@ public:
     {
         while(m_head)
         {
-            Node *nodePtrCopy = m_head;
+            Node<T> *nodePtrCopy = m_head;
             m_head = m_head->next;
             std::allocator_traits<AllocNode>::destroy(alloc, nodePtrCopy);
             std::allocator_traits<AllocNode>::deallocate(alloc, nodePtrCopy, 1);
@@ -163,7 +166,7 @@ public:
 
     void pushFront(value_type item)
     {
-        Node *newNode = std::allocator_traits<AllocNode>::allocate(alloc, 1);
+        Node<T> *newNode = std::allocator_traits<AllocNode>::allocate(alloc, 1);
         std::allocator_traits<AllocNode>::construct(alloc, newNode, item);
         if(m_head)
         {
@@ -179,7 +182,7 @@ public:
 
     void pushBack(value_type item)
     {
-        Node *newNode = std::allocator_traits<AllocNode>::allocate(alloc, 1);
+        Node<T> *newNode = std::allocator_traits<AllocNode>::allocate(alloc, 1);
         std::allocator_traits<AllocNode>::construct(alloc, newNode, item);
         if(m_tail)
         {
@@ -195,13 +198,13 @@ public:
 
     void insertAfter(iterator place, value_type item)
     {
-        Node *nodePtr = place.get();
+        Node<T> *nodePtr = place.get();
         if(!nodePtr)
         {
             pushFront(std::move(item));
             return;
         }
-        Node *newNode = std::allocator_traits<AllocNode>::allocate(alloc, 1);
+        Node<T> *newNode = std::allocator_traits<AllocNode>::allocate(alloc, 1);
         std::allocator_traits<AllocNode>::construct(alloc, newNode, item);
         newNode->next = nodePtr->next;
         nodePtr->next = newNode;

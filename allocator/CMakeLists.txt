@@ -8,3 +8,10 @@ set_target_properties(allocator PROPERTIES
     CXX_STANDARD 20
     CXX_STANDARD_REQUIRED ON
 )
+
+add_executable(allocatorBenchmark benchmark.cpp)
+
+set_target_properties(allocatorBenchmark PROPERTIES
+    CXX_STANDARD 20
+    CXX_STANDARD_REQUIRED ON
+)

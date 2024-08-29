@@ -13,8 +13,10 @@ private:
         Node *next = nullptr;
         T data;
     };
+
     Node *m_head = nullptr;
     Node *m_tail = nullptr;
+
     using AllocNode = typename std::allocator_traits<Alloc>::rebind_alloc<Node>;
     AllocNode alloc;
 
@@ -31,14 +33,17 @@ public:
     {
     private:
         friend class ForwardList;
+        
         explicit ForwardListConstIterator(const Node *ptr) noexcept :
-            m_current{ptr}
+            m_pCurrentNode{ptr}
         {}
+
         const Node* get() const noexcept
         {
-            return m_current;
+            return m_pCurrentNode;
         }
-        const Node *m_current;
+        
+        const Node *m_pCurrentNode;
 
     public:
         using difference_type = ForwardList::difference_type;
@@ -46,31 +51,36 @@ public:
         using pointer = ForwardList::const_pointer;
         using reference = ForwardList::const_reference;
         using iterator_category = std::forward_iterator_tag;
+        
         reference operator*() const noexcept
         {
-            assert(m_current != nullptr);
-            return m_current->data;
+            assert(m_pCurrentNode != nullptr);
+            return m_pCurrentNode->data;
         }
+        
         ForwardListConstIterator& operator++() noexcept
         {
-            assert(m_current != nullptr);
-            m_current = m_current->next;
+            assert(m_pCurrentNode != nullptr);
+            m_pCurrentNode = m_pCurrentNode->next;
             return *this;
         }
+        
         ForwardListConstIterator operator++(int) noexcept
         {
-            assert(m_current != nullptr);
+            assert(m_pCurrentNode != nullptr);
             ForwardListConstIterator iterCopy = *this;
-            m_current = m_current->next;
+            m_pCurrentNode = m_pCurrentNode->next;
             return iterCopy;
         }
+        
         bool operator==(ForwardListConstIterator &other) const noexcept
         {
-            return m_current == other.m_current;
+            return m_pCurrentNode == other.m_current;
         }
+        
         bool operator!=(ForwardListConstIterator &other) const noexcept
         {
-            return m_current != other.m_current;
+            return m_pCurrentNode != other.m_current;
         }
     };
 
@@ -78,14 +88,17 @@ public:
     {
     private:
         friend class ForwardList;
+        
         explicit ForwardListIterator(Node *ptr) noexcept :
-            m_current{ptr}
+            m_pCurrentNode{ptr}
         {}
+        
         Node* get() const noexcept
         {
-            return m_current;
+            return m_pCurrentNode;
         }
-        Node *m_current;
+        
+        Node *m_pCurrentNode;
 
     public:
         using difference_type = ForwardList::difference_type;
@@ -93,31 +106,36 @@ public:
         using pointer = ForwardList::const_pointer;
         using reference = ForwardList::reference;
         using iterator_category = std::forward_iterator_tag;
+        
         reference operator*() const noexcept
         {
-            assert(m_current != nullptr);
-            return m_current->data;
+            assert(m_pCurrentNode != nullptr);
+            return m_pCurrentNode->data;
         }
+        
         ForwardListIterator& operator++() noexcept
         {
-            assert(m_current != nullptr);
-            m_current = m_current->next;
+            assert(m_pCurrentNode != nullptr);
+            m_pCurrentNode = m_pCurrentNode->next;
             return *this;
         }
+        
         ForwardListIterator operator++(int) noexcept
         {
-            assert(m_current != nullptr);
+            assert(m_pCurrentNode != nullptr);
             ForwardListIterator iterCopy = *this;
-            m_current = m_current->next;
+            m_pCurrentNode = m_pCurrentNode->next;
             return iterCopy;
         }
+        
         bool operator==(ForwardListIterator other) const noexcept
         {
-            return m_current == other.m_current;
+            return m_pCurrentNode == other.m_pCurrentNode;
         }
+        
         bool operator!=(ForwardListIterator other) const noexcept
         {
-            return m_current != other.m_current;
+            return m_pCurrentNode != other.m_pCurrentNode;
         }
     };
 
@@ -125,6 +143,7 @@ public:
     using const_iterator = ForwardListConstIterator;
 
     ForwardList() = default;
+    
     void clear()
     {
         while(m_head)
@@ -136,11 +155,13 @@ public:
         }
         m_tail = nullptr;
     }
+
     ~ForwardList()
     {
         clear();
     }
-    void push_front(value_type item)
+
+    void pushFront(value_type item)
     {
         Node *newNode = std::allocator_traits<AllocNode>::allocate(alloc, 1);
         std::allocator_traits<AllocNode>::construct(alloc, newNode, item);
@@ -155,7 +176,8 @@ public:
             m_tail = newNode;
         }
     }
-    void push_back(value_type item)
+
+    void pushBack(value_type item)
     {
         Node *newNode = std::allocator_traits<AllocNode>::allocate(alloc, 1);
         std::allocator_traits<AllocNode>::construct(alloc, newNode, item);
@@ -170,12 +192,13 @@ public:
             m_tail = newNode;
         }
     }
-    void insert_after(iterator place, value_type item)
+
+    void insertAfter(iterator place, value_type item)
     {
         Node *nodePtr = place.get();
         if(!nodePtr)
         {
-            push_front(std::move(item));
+            pushFront(std::move(item));
             return;
         }
         Node *newNode = std::allocator_traits<AllocNode>::allocate(alloc, 1);
@@ -183,22 +206,27 @@ public:
         newNode->next = nodePtr->next;
         nodePtr->next = newNode;
     }
+
     iterator begin() const noexcept
     {
         return iterator{m_head};
     }
+
     iterator end() const noexcept
     {
         return iterator{nullptr};
     }
+
     const_iterator cbegin() const noexcept
     {
         return const_iterator{m_head};
     }
+
     const_iterator cend() const noexcept
     {
         return const_iterator{nullptr};
     }
+
     iterator find(const_reference item) const noexcept
     {
         for(auto it = begin(); it != end(); ++it)

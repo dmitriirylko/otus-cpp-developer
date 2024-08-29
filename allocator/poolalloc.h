@@ -4,8 +4,11 @@
 #include <queue>
 #include <memory>
 
-// #define LOGGING
+#define LOGGING
 
+/**
+ * @brief Pool from where memory will be allocated.
+ */
 class Pool
 {
 public:
@@ -23,12 +26,17 @@ public:
     /**
      * @brief Gets pointer out of the pool for further allocation. If there are no
      *          vacant addresses in pool it tries to allocate new memory block.
+     * @param n Number of elements to allocate.
      * @return Pointer out of the pool for allocation.
      */
-    void* allocate()
+    void* allocate(size_t n)
     {
+        if(n > m_elementsNum)
+        {
+            throw std::bad_alloc();
+        }
         uint8_t* currentPtrCopy = m_currentPtr;
-        m_currentPtr += m_typeSize;
+        m_currentPtr += n * m_typeSize;
         if(m_currentPtr > m_finalPtr)
         {
             throw std::bad_alloc();
@@ -39,7 +47,8 @@ public:
         return currentPtrCopy;
     }
     /**
-     * @brief Returns deallocated pointer to addresses queue.
+     * @brief Deallocates memory from pool.
+     * @note TO DO.
      */
     void deallocate(void *ptr)
     {}
@@ -68,20 +77,20 @@ private:
      */
     std::size_t m_typeSize;
     /**
-     * @brief Number of elements pool have to store in one memory block.
+     * @brief Number of elements pool have to store in memory block.
      */
     size_t m_elementsNum;
     /**
-     * @brief Queue of vacant addresses which can be used in allocation.
+     * @brief Block from where memory will be allocated.
      */
-    // std::queue<void*> m_addrs{};
-    /**
-     * @brief Stack of memory blocks. Block are added when previous
-     *          one has been run out or there are no blocks in stack.
-     */
-    // std::stack<std::unique_ptr<uint8_t[]>> m_blocks{};
     std::unique_ptr<uint8_t[]> m_block;
+    /**
+     * @brief Next free pointer in the pool where memory can be allocated.
+     */
     uint8_t* m_currentPtr = nullptr;
+    /**
+     * @brief Pointer to the element next to the last element of pool.
+     */
     uint8_t* m_finalPtr = nullptr;
 };
 
@@ -96,17 +105,20 @@ public:
     using propagate_on_container_copy_assignment = std::true_type;
     using propagate_on_container_move_assignment = std::true_type;
     using propagate_on_container_swap = std::true_type;
+
     template <typename U>
     struct rebind
     {
         using other = PoolAllocator<U, elementsNum>;
     };
+
     PoolAllocator() : m_pool{std::make_shared<Pool>(sizeof(T), elementsNum)}
     {
         #ifdef LOGGING
         std::cout << this << " constructor, sizeof(T): " << sizeof(T) << '\n';
         #endif
     }
+
     template<typename U>
     PoolAllocator(const PoolAllocator<U, elementsNum>& other) noexcept : m_pool{other.m_pool}
     {
@@ -115,12 +127,14 @@ public:
         #endif
         m_pool->rebind(sizeof(T));
     }
+
     PoolAllocator(PoolAllocator&& other) noexcept : m_pool{std::move(other.m_pool)}
     {
         #ifdef LOGGING
         std::cout << this << " move constructor, sizeof(T): " << sizeof(T) << '\n';
         #endif
     }
+
     PoolAllocator& operator=(PoolAllocator&& other) noexcept
     {
         m_pool = std::move(other.m_pool);
@@ -129,12 +143,14 @@ public:
         #endif
         return *this;
     }
+
     PoolAllocator(const PoolAllocator& other) noexcept : m_pool{other.m_pool}
     {
         #ifdef LOGGING
         std::cout << this << " copy constructor, sizeof(T): " << sizeof(T) << '\n';
         #endif
     }
+
     PoolAllocator& operator=(const PoolAllocator& other) noexcept
     {
         m_pool = other.m_pool;
@@ -143,28 +159,20 @@ public:
         #endif
         return *this;
     }
+
     pointer allocate(size_type n)
     {
         #ifdef LOGGING
         std::cout << this << " A [" << n << "]: ";
         #endif
-        /* In case of allocation of more than one element our custom allocator works as std::allocator. */
-        if(n != 1)
-        {
-            return static_cast<pointer>(malloc(sizeof(T) * n));
-        }
-        return static_cast<pointer>(m_pool->allocate());
+        return static_cast<pointer>(m_pool->allocate(n));
     }
-    /* In case of deallocation of more than one element our custom allocator works as std::allocator. */
+
     void deallocate(pointer ptr, size_type n)
     {
         #ifdef LOGGING
         std::cout << this << " D [" << n << "]: " << ptr << std::endl;
         #endif
-        if(n != 1)
-        {
-            free(ptr);
-        }
         m_pool->deallocate(ptr);
     }
     template <typename U, typename... Args>

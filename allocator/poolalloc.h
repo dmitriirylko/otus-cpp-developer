@@ -123,7 +123,6 @@ public:
     }
     PoolAllocator& operator=(PoolAllocator&& other) noexcept
     {
-
         m_pool = std::move(other.m_pool);
         #ifdef LOGGING
         std::cout << this << " move assignment, sizeof(T): " << sizeof(T) << '\n';

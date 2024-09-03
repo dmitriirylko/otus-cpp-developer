@@ -14,8 +14,8 @@ jobs:
     - name: Doxygen Action
       uses: mattnotmitt/doxygen-action@v1.1.0
       with:
-          doxyfile-path: ./hw4-sfinae/docs/Doxyfile
-          working-directory: ./hw4-sfinae
+          doxyfile-path: ./Doxyfile
+          working-directory: .
     
     # Deploy the HTML documentation to GitHub Pages
     - name: GH Pages Deployment

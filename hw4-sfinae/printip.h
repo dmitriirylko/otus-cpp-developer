@@ -3,6 +3,7 @@
  * @brief Template function that prints IP address-like data structures.
  * @author dmitriirylko
  */
+
 #pragma once
 
 #include <iostream>

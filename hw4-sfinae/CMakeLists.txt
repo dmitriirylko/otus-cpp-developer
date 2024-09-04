@@ -18,7 +18,7 @@ endif()
 
 message("Version is \"${PROJECT_VERSION}\".")
 
-project(sfinae VERSION ${PROJECT_VERSION})
+project(print_ip VERSION ${PROJECT_VERSION})
 # project(sfinae)
 
 add_executable(${CMAKE_PROJECT_NAME} main.cpp)

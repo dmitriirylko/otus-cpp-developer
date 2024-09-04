@@ -1,5 +1,0 @@
-var searchData=
-[
-  ['addaddrs_0',['addAddrs',['../d5/d0b/classPool.html#a439d491b3754f4409a278b34b3d4ab58',1,'Pool::addAddrs()'],['../d5/d0b/classPool.html#a439d491b3754f4409a278b34b3d4ab58',1,'Pool::addAddrs()'],['../d5/d0b/classPool.html#a439d491b3754f4409a278b34b3d4ab58',1,'Pool::addAddrs()']]],
-  ['allocate_1',['allocate',['../d9/d1a/classmyallocator.html#a8ee5bf0ff6019e9fce2865b7317ca2d4',1,'myallocator::allocate()'],['../d9/da7/classLinearAllocator.html#a08538b4a5a0fe96f5adf3b17e8f9cbbd',1,'LinearAllocator::allocate()'],['../d5/d0b/classPool.html#a69679b1aec9392ecc7f191ca4c99a2d1',1,'Pool::allocate()'],['../d1/d54/classPoolAllocator.html#a474104ec93717a1c5210b0a1a0595ae9',1,'PoolAllocator::allocate()'],['../d5/d0b/classPool.html#a610d7c88c80512619695fc0921c1ff18',1,'Pool::allocate()'],['../d1/d54/classPoolAllocator.html#a474104ec93717a1c5210b0a1a0595ae9',1,'PoolAllocator::allocate()'],['../d5/d0b/classPool.html#a69679b1aec9392ecc7f191ca4c99a2d1',1,'Pool::allocate()'],['../d1/d54/classPoolAllocator.html#a474104ec93717a1c5210b0a1a0595ae9',1,'PoolAllocator::allocate()']]]
-];

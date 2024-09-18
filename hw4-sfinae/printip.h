@@ -1,6 +1,6 @@
 /**
  * @file printip.h
- * @brief Template function that prints IP address-like data structures.
+ * @brief File contains template function that prints IP address-like data structures.
  * @author dmitriirylko
  */
 
@@ -11,9 +11,16 @@
 #include <vector>
 #include <list>
 #include <tuple>
+#include <stdint.h>
 
+/**
+ * @brief Template function that prints ip address represented as integral type.
+ * @tparam T Integral type.
+ * @tparam F Fake parameter to restrict overload only for integral types by SFINAE mechanism.
+ * @param [in] t Integer to print.
+ */
 template<typename T,
-         typename std::enable_if_t<std::is_integral_v<T>, int> = 0>
+         typename F = std::enable_if_t<std::is_integral_v<T>, int>>
 void print_ip(T t)
 {
     auto pt = reinterpret_cast<uint8_t*>(&t) + sizeof(T) - 1;
@@ -26,19 +33,33 @@ void print_ip(T t)
     std::cout << std::endl;
 }
 
+/**
+ * @brief Template function that prints ip address represented as std::string.
+ * @tparam T String type.
+ * @tparam F Fake parameter to restrict overload only for std::string's by SFINAE mechanism.
+ * @param [in] t String to print.
+ */
 template<typename T,
-         typename std::enable_if_t<std::is_same_v<T, std::string>, int> = 0>
+         typename F = std::enable_if_t<std::is_same_v<T, std::string>, int>>
 void print_ip(const T& t)
 {
     std::cout << t << std::endl;
 }
 
+/**
+ * @brief Template function that prints ip address represented as container (std::vector or std::list).
+ * @tparam Container Container (std::vector or std::list).
+ * @tparam T Container data type.
+ * @tparam Allocator Containers allocator.
+ * @tparam F Fake parameter to restrict overload only for std::vector's and std::list's by SFINAE mechanism.
+ * @param [in] t Container to print.
+ */
 template<
         template<typename, typename> typename Container,
         typename T,
         typename Allocator = std::allocator<T>,
-        typename std::enable_if_t<std::is_same_v<Container<T, Allocator>, std::vector<T, Allocator>> ||
-                                  std::is_same_v<Container<T, Allocator>, std::list<T, Allocator>>, int> = 0>
+        typename F = std::enable_if_t<std::is_same_v<Container<T, Allocator>, std::vector<T, Allocator>> ||
+                                      std::is_same_v<Container<T, Allocator>, std::list<T, Allocator>>, int> >
 void print_ip(const Container<T, Allocator>& t)
 {
     size_t counter = 0;
@@ -51,6 +72,13 @@ void print_ip(const Container<T, Allocator>& t)
     std::cout << std::endl;
 }
 
+/**
+ * @brief Template function that prints ip address represented as std::tuple.
+ *          This overload ends recursion.
+ * @tparam I Index of tuple element to print. Index should be zero.
+ * @tparam Ts Tuple types.
+ * @param [in] t Tuple to print.
+ */
 template<size_t I,
          typename... Ts,
          typename std::enable_if_t<I == sizeof...(Ts), int> = 0>
@@ -60,6 +88,12 @@ void print_ip(std::tuple<Ts...> t)
     return;
 }
 
+/**
+ * @brief Template function that prints ip address represented as std::tuple recursively.
+ * @tparam I Index of tuple element to print.
+ * @tparam Ts Tuple types.
+ * @param [in] t Tuple to print.
+ */
 template<size_t I = 0,
          typename... Ts,
          typename std::enable_if_t<I < sizeof...(Ts), int> = 0>

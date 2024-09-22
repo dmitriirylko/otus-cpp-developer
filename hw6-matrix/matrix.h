@@ -9,6 +9,8 @@ template<typename T, T defaultValue> class MatrixProxy;
 template<typename T, T defaultValue>
 class Matrix
 {
+private:
+
 public:
     Matrix() = default;
 
@@ -21,15 +23,40 @@ public:
 
     void print()
     {
-        for(auto const& x : m_data)
+        for(const auto &x : m_data)
         {
-            std::cout << x.first.first << ", " << x.first.second << ", " << x.second << std::endl;
+            std::cout << "[" << x.first.first
+                      << ", " << x.first.second << "] = "
+                      << x.second << std::endl;
         }
     }
 
     MatrixProxy<T, defaultValue> operator[](size_t row)
     {
-        return MatrixProxy(*this, row);
+        return MatrixProxy<T, defaultValue>(*this, row);
+    }
+
+    using iterator = typename std::map<std::pair<size_t, size_t>, T>::iterator;
+    using const_iterator = typename std::map<std::pair<size_t, size_t>, T>::const_iterator;
+
+    iterator begin()
+    {
+        return m_data.begin();
+    }
+
+    iterator end()
+    {
+        return m_data.end();
+    }
+
+    const_iterator cbegin()
+    {
+        return m_data.cbegin();
+    }
+
+    const_iterator cend()
+    {
+        return m_data.cend();
     }
 
 private:
@@ -41,24 +68,45 @@ template<typename T, T defaultValue>
 class MatrixProxy
 {
 public:
-    MatrixProxy(Matrix<T, defaultValue>& matrix, size_t row) :
-        m_matrix{matrix},
-        m_row{row}
+    MatrixProxy(Matrix<T, defaultValue> &matrix, size_t row) :
+        m_matrix(matrix),
+        m_row(row)
     {}
 
-    ~MatrixProxy() = default;
-
-    T& operator[](size_t col)
+    MatrixProxy& operator[](size_t col)
     {
-        auto key = std::make_pair(m_row, col);
-        if(m_matrix.m_data.find(key) == m_matrix.m_data.end())
+        m_col = col;
+        return *this;
+    } 
+
+    void operator=(T value)
+    {
+        auto idx = std::make_pair(m_row, m_col);
+        if(value == defaultValue)
         {
+            auto iter = m_matrix.m_data.find(idx);
+            if(iter == m_matrix.m_data.end())
+            {
+                return;
+            }
+            m_matrix.m_data.erase(iter);
             return;
         }
-        return m_matrix.m_data[key];
-    } 
+        m_matrix.m_data[idx] = value;
+    }
+
+    operator T()
+    {
+        auto idx = std::make_pair(m_row, m_col);
+        if(m_matrix.m_data.find(idx) == m_matrix.m_data.end())
+        {
+            return defaultValue;
+        }
+        return m_matrix.m_data[idx];
+    }
 
 private:
     size_t m_row;
-    Matrix<T, defaultValue>& m_matrix;
+    size_t m_col;
+    Matrix<T, defaultValue> &m_matrix;
 };

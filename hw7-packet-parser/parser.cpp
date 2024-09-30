@@ -8,9 +8,46 @@ Parser::Parser(size_t packetSize) :
 
 void Parser::parse(const std::string& cmd)
 {
-    if(!cmd.empty()) m_packet.push_back(cmd);
-    if(m_packet.size() == m_packetSize ||
-       cmd.empty())
+    CmdType cmdType = findType(cmd);
+    
+    if(cmdType == CmdType::START_DYNAMIC)
+    {
+        if(m_isDynamicStarted)
+        {
+            m_isNested = true;
+            return;
+        }
+
+        if(m_packet.size())
+        {
+            notify();
+        }
+        
+        m_packet.clear();
+        m_isDynamicStarted = true;
+        return;
+    }
+
+    if(cmdType == CmdType::END_DYNAMIC)
+    {
+        if(m_isNested)
+        {
+            m_isNested = false;
+            return;
+        }
+        notify();
+        m_packet.clear();
+        m_isDynamicStarted = false;
+        m_isNested = false;
+        return;
+    }
+    
+    if(cmdType == CmdType::PAYLOAD)
+    {
+        m_packet.push_back(cmd);
+    }
+
+    if((m_packet.size() == m_packetSize) && (m_isDynamicStarted == false))
     {
         notify();
         m_packet.clear();
@@ -37,6 +74,26 @@ void Parser::notify()
         {
             m_subs.erase(iter++);
         }
+    }
+}
+
+CmdType Parser::findType(const std::string& cmd)
+{
+    if(cmd.empty())
+    {
+        return CmdType::END_OF_FILE;
+    }
+    else if(cmd == "{")
+    {
+        return CmdType::START_DYNAMIC;
+    }
+    else if(cmd == "}")
+    {
+        return CmdType::END_DYNAMIC;
+    }
+    else
+    {
+        return CmdType::PAYLOAD;
     }
 }
 

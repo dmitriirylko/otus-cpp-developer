@@ -16,13 +16,41 @@ private:
             m_row(row)
         {}
 
-        T& operator[](size_t col)
+        MatrixProxy& operator[](size_t col)
         {
-            return m_ptr->m_data[std::make_pair(m_row, col)];
+            m_col = col;
+            return *this;
         } 
+
+        void operator=(T value)
+        {
+            auto idx = std::make_pair(m_row, m_col);
+            if(value == defaultValue)
+            {
+                auto iter = m_ptr->m_data.find(idx);
+                if(iter == m_ptr->m_data.end())
+                {
+                    return;
+                }
+                m_ptr->m_data.erase(iter);
+                return;
+            }
+            m_ptr->m_data[idx] = value;
+        }
+
+        operator T()
+        {
+            auto idx = std::make_pair(m_row, m_col);
+            if(m_ptr->m_data.find(idx) == m_ptr->m_data.end())
+            {
+                return defaultValue;
+            }
+            return m_ptr->m_data[idx];
+        }
 
     private:
         size_t m_row;
+        size_t m_col;
         Matrix* m_ptr;
     };
 
@@ -51,6 +79,19 @@ public:
     MatrixProxy operator[](size_t row)
     {
         return MatrixProxy(this, row);
+    }
+
+    using iterator = typename std::map<std::pair<size_t, size_t>, T>::iterator;
+    using const_iterator = typename std::map<std::pair<size_t, size_t>, T>::const_iterator;
+
+    iterator begin()
+    {
+        return m_data.begin();
+    }
+
+    iterator end()
+    {
+        return m_data.end();
     }
 
 private:

@@ -1,6 +1,6 @@
 #include "consolelogger.h"
 
-void ConsoleLogger::update(const std::vector<std::string>& cmdPack)
+void ConsoleLogger::updatePacketReady(const std::vector<std::string>& cmdPack)
 {
     size_t cnt = 0;
     for(const auto& cmd : cmdPack)

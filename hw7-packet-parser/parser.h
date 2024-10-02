@@ -5,6 +5,7 @@
 #include <vector>
 #include <memory>
 #include <list>
+#include <stdexcept>
 
 enum class CmdType
 {
@@ -17,14 +18,21 @@ enum class CmdType
 class ISubscriber
 {
 public:
-    virtual void update(const std::vector<std::string>& cmdPack) = 0;
+    virtual void updatePacketReady(const std::vector<std::string>& cmdPack) = 0;
+    virtual void updatePacketStarted()
+    {}
     virtual ~ISubscriber() = default;
 };
 
 class IPublisher
 {
 public:
-    virtual void subscribe(const std::shared_ptr<ISubscriber>& sub) = 0;
+    virtual void subscribePacketStarted(const std::shared_ptr<ISubscriber>& sub) = 0;
+    virtual void subscribePacketReady(const std::shared_ptr<ISubscriber>& sub) = 0;
+
+protected:
+    virtual void notifyPacketStarted() = 0;
+    virtual void notifyPacketReady() = 0;
     ~IPublisher() = default;
 };
 
@@ -34,17 +42,20 @@ public:
     Parser(size_t packetSize);
     ~Parser() = default;
     void parse(const std::string& cmd);
-    void subscribe(const std::shared_ptr<ISubscriber>& sub) override;
+    void subscribePacketStarted(const std::shared_ptr<ISubscriber>& sub) override;
+    void subscribePacketReady(const std::shared_ptr<ISubscriber>& sub) override;
+
+protected:
+    void notifyPacketStarted() override;
+    void notifyPacketReady() override;
 
 private:
-    void notify();
     CmdType findType(const std::string& cmd);
 
     std::vector<std::string> m_packet;
-    size_t m_packetSize;
-    std::list<std::weak_ptr<ISubscriber>> m_subs;
-    bool m_isDynamicStarted = false;
-    bool m_isNested = false;
+    size_t m_defaultPacketSize;
+    std::list<std::weak_ptr<ISubscriber>> m_subsPacketStarted;
+    std::list<std::weak_ptr<ISubscriber>> m_subsPacketReady;
     int m_nestingLevel = 0;
 };
 

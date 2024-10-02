@@ -7,7 +7,11 @@ class ConsoleLogger : public ISubscriber
 public:
     ConsoleLogger() = default;
     ~ConsoleLogger() = default;
-    void update(const std::vector<std::string>& cmdPack) override;
+    void updatePacketReady(const std::vector<std::string>& cmdPack) override;
+    void updatePacketStarted() override
+    {
+        std::cout << "Packet beginning started" << std::endl;
+    }
 
 private:
 };

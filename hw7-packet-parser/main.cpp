@@ -10,9 +10,8 @@ int main()
     Source source(std::make_unique<StdInputSource>());
     auto parser = std::make_shared<Parser>(defaultPacketSize);
     auto consoleLogger = std::make_shared<ConsoleLogger>();
-    parser->subscribe(consoleLogger);
-    // while(source.getCmd())
-    // {}
+    parser->subscribePacketReady(consoleLogger);
+    parser->subscribePacketStarted(consoleLogger);
     std::string str;
     do
     {

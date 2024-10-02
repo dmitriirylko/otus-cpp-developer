@@ -45,6 +45,7 @@ private:
     std::list<std::weak_ptr<ISubscriber>> m_subs;
     bool m_isDynamicStarted = false;
     bool m_isNested = false;
+    int m_nestingLevel = 0;
 };
 
 class ICommand

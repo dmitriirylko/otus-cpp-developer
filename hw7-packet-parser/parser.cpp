@@ -15,6 +15,7 @@ void Parser::parse(const std::string& cmd)
         if(m_isDynamicStarted)
         {
             m_isNested = true;
+            ++m_nestingLevel;
             return;
         }
 
@@ -32,7 +33,11 @@ void Parser::parse(const std::string& cmd)
     {
         if(m_isNested)
         {
-            m_isNested = false;
+            --m_nestingLevel;
+            if(m_nestingLevel == 0)
+            {
+                m_isNested = false;
+            }
             return;
         }
         notify();

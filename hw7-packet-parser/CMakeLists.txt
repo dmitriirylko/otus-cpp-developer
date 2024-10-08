@@ -7,6 +7,7 @@ add_executable(bulk
     source.cpp
     parser.cpp
     consolelogger.cpp
+    filelogger.cpp
 )
 
 set_target_properties(bulk PROPERTIES CXX_STANDARD 17)

@@ -7,7 +7,7 @@ void ConsoleLogger::updatePacketReady(const std::vector<std::string>& cmdPack)
     {
         if(cnt == 0)
         {
-            std::cout << cmd;
+            std::cout << "bulk: " << cmd;
         }
         else
         {

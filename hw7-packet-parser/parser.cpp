@@ -53,6 +53,12 @@ void Parser::parse(const std::string& cmd)
         return;
 
     case CmdType::END_OF_FILE:
+        if(m_nestingLevel > 0)
+        {
+            m_nestingLevel = 0;
+            m_packet.clear();
+            return;
+        }
         if(m_packet.size())
         {
             notifyPacketReady();

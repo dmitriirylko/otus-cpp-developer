@@ -9,6 +9,7 @@ find_package(Boost 1.45.0 COMPONENTS filesystem program_options REQUIRED)
     
 add_executable(bayan
     main.cpp
+    config.cpp
 )
     
 set_target_properties(bayan PROPERTIES CXX_STANDARD 17)

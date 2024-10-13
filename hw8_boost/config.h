@@ -2,8 +2,10 @@
 
 #include <vector>
 #include <iostream>
+#include <stdexcept>
 
 #include <boost/program_options.hpp>
+#include <boost/algorithm/string.hpp>
 
 enum class HashAlgorithm
 {
@@ -20,26 +22,21 @@ public:
         return instance;
     }
 
-    void setIncludedFolderPaths(const std::vector<std::string>& paths);
     const std::vector<std::string>& getIncludedFolderPaths();
 
-    void setExcludedFolderPaths(const std::vector<std::string>& paths);
     const std::vector<std::string>& getExcludedFolderPaths();
 
-    void setMinFileSize(size_t size);
     size_t getMinFileSize();
 
-    void setBlockSize(size_t size);
     size_t getBlockSize();
 
-    void setMask(const std::string& mask);
     const std::string& getMask();
 
-    void setScanningLevel(uint8_t level);
     uint8_t getScanningLevel();
 
-    void setHashAlgorithm(HashAlgorithm algorithm);
     HashAlgorithm getHashAlgorithm();
+
+    void setData(int argc, char* argv[]);
 
 private:
     Config();
@@ -50,18 +47,27 @@ private:
 
     std::vector<std::string> m_includedFolderPaths;
     std::vector<std::string> m_excludedFolderPaths;
-    size_t m_minFileSize;
-    size_t m_blockSize;
+    
+    /**
+     * @brief Minimal size of file to compare in bytes.
+     */
+    size_t m_minFileSize = 1;
+
+    /**
+     * @brief Size of chunks on which file will be divided. Files will be
+     *          compared by this chunks.
+     */
+    size_t m_blockSize = 32;
     std::string m_mask;
-    uint8_t m_scanningLevel;
+    
+    /**
+     * @brief Scanning level of directory:
+     *          0 - only specified directory will be scanned;
+     *          1 - nested directories will be scanned as well.
+     */
+    int m_scanningLevel = 1;
     HashAlgorithm m_hashAlgorithm;
-};
 
-class CommandLineArgsParser
-{
-public:
-    CommandLineArgsParser(int argc, char* argv[]);
-
-private:
     boost::program_options::options_description m_desc;
+    boost::program_options::variables_map m_vm;
 };

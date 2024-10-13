@@ -6,7 +6,15 @@
 
 int main(int argc, char* argv[])
 {
-    CommandLineArgsParser parser(argc, argv);
+    try
+    {
+        Config::instance().setData(argc, argv);
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << std::endl;
+    }
+    
     // boost::program_options::variables_map vm;
     // boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
     // boost::program_options::notify(vm);
@@ -42,9 +50,11 @@ int main(int argc, char* argv[])
     // {
     //     std::cout << path << std::endl;
     // }
-    std::vector<std::string> vec;
-    vec.emplace_back("path1");
-    vec.emplace_back("path2");
-    Config::instance().setIncludedFolderPaths(vec);
-    Config::instance().setExcludedFolderPaths(vec);
+
+    
+    // std::vector<std::string> vec;
+    // vec.emplace_back("path1");
+    // vec.emplace_back("path2");
+    // Config::instance().setIncludedFolderPaths(vec);
+    // Config::instance().setExcludedFolderPaths(vec);
 }

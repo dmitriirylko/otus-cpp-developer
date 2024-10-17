@@ -126,5 +126,4 @@ void Config::setData(int argc, char* argv[])
             throw std::invalid_argument("Invalid type of crc algorithm.");
         }
     }
-        int aa = 10;
 }

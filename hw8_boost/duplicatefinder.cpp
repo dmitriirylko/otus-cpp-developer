@@ -18,20 +18,41 @@ void DuplicateFinder::createFilePool()
             std::invalid_argument("There is no such type of scanning level.");
         }
     }
-    int aa = 11;
 }
 
 template<typename T>
 void DuplicateFinder::iterateFolder(const std::string& path)
 {
-    for(T iter{path};
-        iter != T{};
-        ++iter)
+    /* Iterate through folder (recursively or not). */
+    for(T iter{path}; iter != T{}; ++iter)
     {
-        if(boost::filesystem::status(*iter).type() == boost::filesystem::regular_file)
+        /* Check if this path corresponds to regular file. */
+        if(boost::filesystem::status(*iter).type() != boost::filesystem::regular_file)
         {
-            m_filePool.push_back(iter->path());
+            continue;
         }
+        /* Check if this path is not contains in excluded folders. */
+        bool isIncluded = true;
+        for(const auto &excludedPath : Config::instance().getExcludedFolderPaths())
+        {
+            if(isSubpath(iter->path(), excludedPath))
+            {
+                isIncluded = false;
+                break;
+            }
+        }
+        if(!isIncluded) continue;
+        /* Check file size requirements. */
+        if(boost::filesystem::file_size(iter->path()) < Config::instance().getMinFileSize()) continue;
+        /* Check mask. */
+        
+        m_filePool.push_back(iter->path());
     }
+}
 
+bool DuplicateFinder::isSubpath(const boost::filesystem::path &queryPath,
+                                const boost::filesystem::path &excludedFolder)
+{
+    auto relativePath = boost::filesystem::relative(queryPath, excludedFolder);
+    return !relativePath.empty() && relativePath.native()[0] != '.';
 }

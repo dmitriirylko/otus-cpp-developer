@@ -14,9 +14,11 @@ public:
     DuplicateFinder() = default;
     ~DuplicateFinder() = default;
     void createFilePool();
-    template<typename T>
-    void iterateFolder(const std::string& path);
 
 private:
+    template<typename T>
+    void iterateFolder(const std::string& path);
+    bool isSubpath(const boost::filesystem::path &queryPath,
+                   const boost::filesystem::path &excludedFolder);
     std::vector<boost::filesystem::path> m_filePool;
 };

@@ -2,7 +2,7 @@
 
 Config::Config() :
     m_minFileSize{1},
-    m_blockSize{10},
+    m_blockSize{32},
     m_scanningLevel{1},
     m_hashAlgorithm{HashAlgorithm::MD5},
     m_desc{"Options"}
@@ -82,7 +82,7 @@ void Config::setData(int argc, char* argv[])
     
     if(m_vm.count("exclude"))
     {
-        m_includedFolderPaths = m_vm["exclude"].as<std::vector<std::string>>();
+        m_excludedFolderPaths = m_vm["exclude"].as<std::vector<std::string>>();
     }
     
     if(m_vm.count("filesize"))

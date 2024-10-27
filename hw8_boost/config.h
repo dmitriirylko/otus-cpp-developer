@@ -45,19 +45,27 @@ private:
     Config(Config&& rhs) = delete;
     Config& operator=(Config&& rhs) = delete;
 
+    /**
+     * @brief Collection of folder paths that contain files which will be
+     *          compared.
+     */
     std::vector<std::string> m_includedFolderPaths;
+    
+    /**
+     * @brief Collection of folder paths that are excluded from comparison.
+     */
     std::vector<std::string> m_excludedFolderPaths;
     
     /**
      * @brief Minimal size of file to compare in bytes.
      */
-    size_t m_minFileSize = 1;
+    size_t m_minFileSize;
 
     /**
      * @brief Size of chunks on which file will be divided. Files will be
-     *          compared by this chunks.
+     *          compared by this chunks (hash of these chunks).
      */
-    size_t m_blockSize = 32;
+    size_t m_blockSize;
     std::string m_mask;
     
     /**
@@ -65,9 +73,15 @@ private:
      *          0 - only specified directory will be scanned;
      *          1 - nested directories will be scanned as well.
      */
-    int m_scanningLevel = 1;
+    int m_scanningLevel;
+
+    /**
+     * @brief Hashing algorithm that will be applied to data chunks to
+     *          compare files (default: MD5, TODO: CRC32).
+     */
     HashAlgorithm m_hashAlgorithm;
 
     boost::program_options::options_description m_desc;
+
     boost::program_options::variables_map m_vm;
 };

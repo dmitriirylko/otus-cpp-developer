@@ -30,7 +30,7 @@ public:
 
     size_t getBlockSize();
 
-    const std::string& getMask();
+    const std::vector<std::string>& getMasks();
 
     uint8_t getScanningLevel();
 
@@ -66,7 +66,12 @@ private:
      *          compared by this chunks (hash of these chunks).
      */
     size_t m_blockSize;
-    std::string m_mask;
+
+    /**
+     * @brief Collection of masks in form of regular expressions. Only files
+     *          that match these masks will be added fir comparison.
+     */
+    std::vector<std::string> m_masks;
     
     /**
      * @brief Scanning level of directory:

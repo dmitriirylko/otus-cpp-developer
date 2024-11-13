@@ -1,5 +1,3 @@
-#include <cassert>
-
 #include "matrix.h"
 
 int main()

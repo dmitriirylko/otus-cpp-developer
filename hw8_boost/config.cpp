@@ -4,7 +4,7 @@ Config::Config() :
     m_minFileSize{1},
     m_blockSize{32},
     m_scanningLevel{1},
-    m_hashAlgorithm{HashAlgorithm::MD5},
+    m_hashAlgorithm{HashAlgorithm::CRC32},
     m_desc{"Options"}
 {
     m_desc.add_options()

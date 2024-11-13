@@ -82,7 +82,7 @@ private:
 
     /**
      * @brief Hashing algorithm that will be applied to data chunks to
-     *          compare files (default: MD5, TODO: CRC32).
+     *          compare files (default: CRC32).
      */
     HashAlgorithm m_hashAlgorithm;
 

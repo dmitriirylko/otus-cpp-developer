@@ -2,7 +2,6 @@
 
 #include <ctime>
 #include <fstream>
-#include <stdexcept>
 
 #include "parser.h"
 

@@ -25,13 +25,14 @@ set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
 
 find_package(Boost 1.45.0 COMPONENTS filesystem program_options regex REQUIRED) 
-    
+
 add_executable(bayan
     main.cpp
     config.cpp
     duplicatefinder.cpp
 )
-    
+
+
 set_target_properties(bayan PROPERTIES CXX_STANDARD 17)
 
 target_include_directories(bayan PUBLIC ${Boost_INCLUDE_DIRS})

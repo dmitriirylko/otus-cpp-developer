@@ -56,13 +56,17 @@ void DuplicateFinder::iterateFolder(const std::string& path)
         /* Check file size requirements. */
         if(boost::filesystem::file_size(iter->path()) < Config::instance().getMinFileSize()) continue;
         /* Check masks. */
-        isIncluded = false;
-        for(const auto &mask : Config::instance().getMasks())
+        isIncluded = true;
+        if(!Config::instance().getMasks().empty())
         {
-            boost::regex regExpr{mask};
-            if(boost::regex_match(iter->path().filename().string(), regExpr))
+            isIncluded = false;
+            for(const auto &mask : Config::instance().getMasks())
             {
-                isIncluded = true;
+                boost::regex regExpr{mask};
+                if(boost::regex_match(iter->path().filename().string(), regExpr))
+                {
+                    isIncluded = true;
+                }
             }
         }
         if(!isIncluded) continue;

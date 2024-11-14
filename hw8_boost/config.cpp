@@ -74,6 +74,7 @@ void Config::setData(int argc, char* argv[])
     if(m_vm.count("include"))
     {
         m_includedFolderPaths = m_vm["include"].as<std::vector<std::string>>();
+        std::cout << m_includedFolderPaths[0] << std::endl;
     }
     else
     {

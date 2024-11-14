@@ -2,9 +2,9 @@
 
 Config::Config() :
     m_minFileSize{1},
-    m_blockSize{10},
+    m_blockSize{32},
     m_scanningLevel{1},
-    m_hashAlgorithm{HashAlgorithm::MD5},
+    m_hashAlgorithm{HashAlgorithm::CRC32},
     m_desc{"Options"}
 {
     m_desc.add_options()
@@ -20,9 +20,9 @@ Config::Config() :
     ("blocksize",
     boost::program_options::value<size_t>(),
     "Block size of one file chunk on which file will be splitted")
-    ("mask",
-    boost::program_options::value<std::string>(),
-    "Mask of filenames to scan")
+    ("masks",
+    boost::program_options::value<std::vector<std::string>>()->multitoken(),
+    "Masks of filenames to scan")
     ("level",
     boost::program_options::value<int>(),
     "Scanning level: 0 - only current directory, 1 - current directory with all subfolders")
@@ -51,9 +51,9 @@ size_t Config::getBlockSize()
     return m_blockSize;
 }
 
-const std::string& Config::getMask()
+const std::vector<std::string>& Config::getMasks()
 {
-    return m_mask;
+    return m_masks;
 }
 
 uint8_t Config::getScanningLevel()
@@ -82,7 +82,7 @@ void Config::setData(int argc, char* argv[])
     
     if(m_vm.count("exclude"))
     {
-        m_includedFolderPaths = m_vm["exclude"].as<std::vector<std::string>>();
+        m_excludedFolderPaths = m_vm["exclude"].as<std::vector<std::string>>();
     }
     
     if(m_vm.count("filesize"))
@@ -95,9 +95,9 @@ void Config::setData(int argc, char* argv[])
         m_blockSize = m_vm["blocksize"].as<size_t>();
     }
     
-    if(m_vm.count("mask"))
+    if(m_vm.count("masks"))
     {
-        m_mask = m_vm["mask"].as<std::string>();
+        m_masks = m_vm["masks"].as<std::vector<std::string>>();
     }
     
     if(m_vm.count("level"))

@@ -30,7 +30,7 @@ public:
 
     size_t getBlockSize();
 
-    const std::string& getMask();
+    const std::vector<std::string>& getMasks();
 
     uint8_t getScanningLevel();
 
@@ -45,29 +45,48 @@ private:
     Config(Config&& rhs) = delete;
     Config& operator=(Config&& rhs) = delete;
 
+    /**
+     * @brief Collection of folder paths that contain files which will be
+     *          compared.
+     */
     std::vector<std::string> m_includedFolderPaths;
+    
+    /**
+     * @brief Collection of folder paths that are excluded from comparison.
+     */
     std::vector<std::string> m_excludedFolderPaths;
     
     /**
      * @brief Minimal size of file to compare in bytes.
      */
-    size_t m_minFileSize = 1;
+    size_t m_minFileSize;
 
     /**
      * @brief Size of chunks on which file will be divided. Files will be
-     *          compared by this chunks.
+     *          compared by this chunks (hash of these chunks).
      */
-    size_t m_blockSize = 32;
-    std::string m_mask;
+    size_t m_blockSize;
+
+    /**
+     * @brief Collection of masks in form of regular expressions. Only files
+     *          that match these masks will be added fir comparison.
+     */
+    std::vector<std::string> m_masks;
     
     /**
      * @brief Scanning level of directory:
      *          0 - only specified directory will be scanned;
      *          1 - nested directories will be scanned as well.
      */
-    int m_scanningLevel = 1;
+    int m_scanningLevel;
+
+    /**
+     * @brief Hashing algorithm that will be applied to data chunks to
+     *          compare files (default: CRC32).
+     */
     HashAlgorithm m_hashAlgorithm;
 
     boost::program_options::options_description m_desc;
+
     boost::program_options::variables_map m_vm;
 };

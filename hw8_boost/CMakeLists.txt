@@ -20,10 +20,11 @@ message("Version is \"${PROJECT_VERSION}\".")
 
 project(bayan VERSION ${PROJECT_VERSION})
 
-set(Boost_USE_STATIC_LIBS OFF) 
-set(Boost_USE_MULTITHREADED ON)  
-set(Boost_USE_STATIC_RUNTIME OFF) 
-find_package(Boost 1.45.0 COMPONENTS filesystem program_options REQUIRED) 
+set(Boost_USE_STATIC_LIBS OFF)
+set(Boost_USE_MULTITHREADED ON)
+set(Boost_USE_STATIC_RUNTIME OFF)
+
+find_package(Boost 1.45.0 COMPONENTS filesystem program_options regex REQUIRED) 
     
 add_executable(bayan
     main.cpp
@@ -32,7 +33,10 @@ add_executable(bayan
 )
     
 set_target_properties(bayan PROPERTIES CXX_STANDARD 17)
-target_link_libraries(bayan Boost::filesystem Boost::program_options)
+
+target_include_directories(bayan PUBLIC ${Boost_INCLUDE_DIRS})
+
+target_link_libraries(bayan Boost::filesystem Boost::program_options Boost::regex)
 
 if(LINUX)
 # -- install command was introduced in 3.15 version of cmake

@@ -3,7 +3,7 @@
 ConsoleLogger::ConsoleLogger(const async::ConsoleQueueShared_t& queue) :
     m_queue{queue}
 {
-    m_thread = std::thread{&ConsoleLogger::isContinue, this};
+    m_thread = std::thread{&ConsoleLogger::process, this};
 }
 
 ConsoleLogger::~ConsoleLogger()
@@ -18,7 +18,7 @@ void ConsoleLogger::updatePacketReady()
     {
         if(cnt == 0)
         {
-            std::cout << "bulk: " << cmd;
+            std::cout << std::this_thread::get_id() << " bulk: " << cmd;
         }
         else
         {

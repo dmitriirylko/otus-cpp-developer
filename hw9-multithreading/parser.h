@@ -42,6 +42,7 @@ class Parser /*: public IPublisher*/
 {
 public:
     Parser(const async::ConsoleQueueShared_t& queue, size_t packetSize);
+    // Parser(async::ConsoleQueue_t& queue, size_t packetSize);
     
     ~Parser() = default;
     
@@ -54,7 +55,8 @@ protected:
     // void notifyPacketStarted() override;
 
 private:
-    const async::ConsoleQueueWeak_t& m_queue;
+    async::ConsoleQueueWeak_t m_queue;
+    // async::ConsoleQueue_t& m_queue;
     
     /**
      * @brief Stores and assembles current cmd from characters.

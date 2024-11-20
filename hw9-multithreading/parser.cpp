@@ -47,7 +47,7 @@ CmdType Parser::findType(const std::string& cmd)
 
 void Parser::parse(const std::string& cmd)
 {
-    std::cout << cmd << std::endl;
+    // std::cout << cmd << std::endl;
 
     CmdType cmdType = findType(cmd);
     
@@ -120,12 +120,12 @@ void Parser::notifyConsolePacketReady()
 {
     auto queue = m_queue.lock();
     if(queue) queue->push(m_packet);
+
+    // m_queue.push(m_packet);
 }
 
 void Parser::notifyFilePacketReady()
-{
-    
-}
+{}
 
 // void Parser::subscribePacketStarted(const std::shared_ptr<ISubscriber>& sub)
 // {

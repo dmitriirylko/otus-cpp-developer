@@ -15,7 +15,7 @@ struct WaitingQueue
         m_tailPtr{m_headPtr.get()},
         m_stopped{false}
     {
-        int gg = 10;
+        std::cout << "Queue ctor" << std::endl;
     }
 
     WaitingQueue(const WaitingQueue&) = delete;
@@ -63,7 +63,6 @@ struct WaitingQueue
     }
 
 private:
-
     struct Node
     {
         T value;
@@ -98,7 +97,12 @@ private:
             if(m_stopped) return true;
             return (m_headPtr.get() != tail());
         });
-        if(m_stopped) return false;
+        
+        if(m_stopped && m_headPtr.get() == tail())
+        {
+            return false;
+        }
+
         entry = std::move(m_headPtr->value);
         takeHeadUnsafe();
         return true;

@@ -7,6 +7,7 @@
 #include "waitingqueue.h"
 
 namespace async {
-    using ConsoleQueueShared_t = std::shared_ptr<WaitingQueue<std::vector<std::string>>>;
-    using ConsoleQueueWeak_t = std::weak_ptr<WaitingQueue<std::vector<std::string>>>;
+    using ConsoleQueue_t = WaitingQueue<std::vector<std::string>>;
+    using ConsoleQueueShared_t = std::shared_ptr<ConsoleQueue_t>;
+    using ConsoleQueueWeak_t = std::weak_ptr<ConsoleQueue_t>;
 }

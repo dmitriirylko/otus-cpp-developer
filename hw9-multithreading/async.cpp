@@ -20,10 +20,9 @@ std::list<std::unique_ptr<Parser>> m_contexts;
  */
 std::mutex mtxContext; 
 
-ConsoleQueueShared_t consoleQueue{};
+ConsoleQueueShared_t consoleQueue = std::make_shared<ConsoleQueue_t>();
 
 ConsoleLogger consoleLogger(consoleQueue);
-ConsoleLogger consoleLogger1(consoleQueue);
 
 handle_t connect(std::size_t bulkSize)
 {
@@ -64,6 +63,11 @@ void disconnect(handle_t handle)
             ++it;
         }
     }
+}
+
+void stop()
+{
+    consoleQueue->stop();
 }
 
 }

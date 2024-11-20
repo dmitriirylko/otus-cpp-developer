@@ -1,9 +1,11 @@
 #include <mutex>
-#include <thread>
 #include <list>
 
 #include "async.h"
+#include "asyncdefs.h"
 #include "parser.h"
+#include "waitingqueue.h"
+#include "consolelogger.h"
 
 namespace async {
 
@@ -16,13 +18,18 @@ std::list<std::unique_ptr<Parser>> m_contexts;
  * @brief Mutex for thread-safe context addition (connect), deletion (disconnect)
  *          and using (receive).
  */
-std::mutex mtxContext;
+std::mutex mtxContext; 
+
+ConsoleQueueShared_t consoleQueue{};
+
+ConsoleLogger consoleLogger(consoleQueue);
+ConsoleLogger consoleLogger1(consoleQueue);
 
 handle_t connect(std::size_t bulkSize)
 {
     std::lock_guard<std::mutex> lck{mtxContext};
     std::cout << "connecting: " << std::this_thread::get_id() << std::endl;
-    m_contexts.emplace_back(std::make_unique<Parser>(bulkSize));
+    m_contexts.emplace_back(std::make_unique<Parser>(consoleQueue, bulkSize));
     return m_contexts.back().get();
 }
 

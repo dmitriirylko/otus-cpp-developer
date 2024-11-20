@@ -1,6 +1,7 @@
 #include "parser.h"
 
-Parser::Parser(size_t packetSize) :
+Parser::Parser(const async::ConsoleQueueShared_t& queue, size_t packetSize) :
+    m_queue{queue},
     m_defaultPacketSize{packetSize}
 {
     m_packet.reserve(m_defaultPacketSize);
@@ -10,15 +11,37 @@ void Parser::receive(const char* data, size_t size)
 {
     for(size_t i = 0; i < size; ++i)
     {
+        /* End of cmd. */
         if(data[i] == '\n' || data[i] == '\0')
         {
             parse(m_currentCmd);
             m_currentCmd.clear();
         }
+        /* Append character to cmd. */
         else
         {
             m_currentCmd.push_back(data[i]);
         }
+    }
+}
+
+CmdType Parser::findType(const std::string& cmd)
+{
+    if(cmd.empty())
+    {
+        return CmdType::END_OF_FILE;
+    }
+    else if(cmd == "{")
+    {
+        return CmdType::START_DYNAMIC;
+    }
+    else if(cmd == "}")
+    {
+        return CmdType::END_DYNAMIC;
+    }
+    else
+    {
+        return CmdType::PAYLOAD;
     }
 }
 
@@ -39,6 +62,7 @@ void Parser::parse(const std::string& cmd)
         if(m_packet.size())
         {
             // notifyPacketReady();
+            notifyConsolePacketReady();
         }
         m_packet.clear();
         return;
@@ -54,6 +78,7 @@ void Parser::parse(const std::string& cmd)
             return;
         }
         // notifyPacketReady();
+        notifyConsolePacketReady();
         m_packet.clear();
         return;
 
@@ -66,6 +91,7 @@ void Parser::parse(const std::string& cmd)
         if((m_packet.size() == m_defaultPacketSize) && (!m_nestingLevel))
         {
             // notifyPacketReady();
+            notifyConsolePacketReady();
             m_packet.clear();
         }
         return;
@@ -80,6 +106,7 @@ void Parser::parse(const std::string& cmd)
         if(m_packet.size())
         {
             // notifyPacketReady();
+            notifyConsolePacketReady();
             m_packet.clear();
         }
         return;
@@ -87,6 +114,17 @@ void Parser::parse(const std::string& cmd)
     default:
         throw std::logic_error("There is no that type of command in parser.");
     }
+}
+
+void Parser::notifyConsolePacketReady()
+{
+    auto queue = m_queue.lock();
+    if(queue) queue->push(m_packet);
+}
+
+void Parser::notifyFilePacketReady()
+{
+    
 }
 
 // void Parser::subscribePacketStarted(const std::shared_ptr<ISubscriber>& sub)
@@ -116,44 +154,6 @@ void Parser::parse(const std::string& cmd)
 //         }
 //     }
 // }
-
-// void Parser::notifyPacketReady()
-// {
-//     auto iter = m_subsPacketReady.begin();
-//     while(iter != m_subsPacketReady.end())
-//     {
-//         auto ptr = iter->lock();
-//         if(ptr)
-//         {
-//             ptr->updatePacketReady(m_packet);
-//             ++iter;
-//         }
-//         else
-//         {
-//             m_subsPacketReady.erase(iter++);
-//         }
-//     }
-// }
-
-CmdType Parser::findType(const std::string& cmd)
-{
-    if(cmd.empty())
-    {
-        return CmdType::END_OF_FILE;
-    }
-    else if(cmd == "{")
-    {
-        return CmdType::START_DYNAMIC;
-    }
-    else if(cmd == "}")
-    {
-        return CmdType::END_DYNAMIC;
-    }
-    else
-    {
-        return CmdType::PAYLOAD;
-    }
-}
 
 // ParseCommand::ParseCommand(const std::shared_ptr<Parser>& parser, const std::string& cmd) :
 //     m_parser{parser},

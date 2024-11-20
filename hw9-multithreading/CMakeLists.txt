@@ -10,6 +10,10 @@ add_library(async SHARED
     async.h
     parser.cpp
     parser.h
+    consolelogger.cpp
+    consolelogger.h
+    waitingqueue.h
+    asyncdefs.h
 )
 
 add_executable(async_cli main.cpp)

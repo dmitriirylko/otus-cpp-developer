@@ -44,7 +44,10 @@ target_link_libraries(async_cli async)
 if(LINUX)
 # -- install command was introduced in 3.15 version of cmake
 # -- we can use sudo make install from build folder
-    install(TARGETS ${CMAKE_PROJECT_NAME} RUNTIME DESTINATION bin)
+    install(TARGETS async_cli RUNTIME DESTINATION bin
+                              LIBRARY DESTINATION lib
+                              ARCHIVE DESTINATION lib)
+
     set(CPACK_GENERATOR DEB)
     set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
     set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")

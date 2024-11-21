@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 
+set(CMAKE_INSTALL_PREFIX /usr/)
+
 find_package(Git)
 
 if(GIT_EXECUTABLE)
@@ -37,21 +39,27 @@ add_library(async SHARED
     filelogger.h
 )
 
+set_target_properties(async PROPERTIES PUBLIC_HEADER async.h)
+
 add_executable(async_cli main.cpp)
 
 target_link_libraries(async_cli async)
 
+install(TARGETS async_cli DESTINATION bin)
+install(TARGETS async LIBRARY DESTINATION lib
+        PUBLIC_HEADER DESTINATION include)
+# install(FILES async.h DESTINATION include)
+
 if(LINUX)
 # -- install command was introduced in 3.15 version of cmake
 # -- we can use sudo make install from build folder
-    install(TARGETS async_cli RUNTIME DESTINATION bin COMPONENT async
-                              LIBRARY DESTINATION lib COMPONENT async
-                              ARCHIVE DESTINATION lib COMPONENT async)
-
-    set(CPACK_GENERATOR DEB)
-    set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
-    set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
-    set(CPACK_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
-    set(CPACK_PACKAGE_CONTACT dmitriirylko@gmail.com)
-    include(CPack)
+    # install(TARGETS async_cli RUNTIME DESTINATION bin COMPONENT async
+    #                           LIBRARY DESTINATION lib COMPONENT async
+    #                           ARCHIVE DESTINATION lib COMPONENT async)
+    # set(CPACK_GENERATOR DEB)
+    # set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
+    # set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
+    # set(CPACK_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
+    # set(CPACK_PACKAGE_CONTACT dmitriirylko@gmail.com)
+    # include(CPack)
 endif()

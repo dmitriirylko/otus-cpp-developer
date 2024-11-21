@@ -22,6 +22,7 @@ void FileLogger::updatePacketReady()
     if(m_fileStream.is_open())
     {    
         size_t cnt = 0;
+
         for(const auto& cmd : m_cmd.pack)
         {
             if(cnt == 0) m_fileStream << "bulk: " << cmd;

@@ -18,8 +18,8 @@ endif()
 
 message("Version is \"${PROJECT_VERSION}\".")
 
-# project(async VERSION ${PROJECT_VERSION})
-project(async)
+project(async VERSION ${PROJECT_VERSION})
+# project(async)
 
 set(CMAKE_CXX_FLAGS -pthread)
 set(CMAKE_CXX_STANDARD 17)

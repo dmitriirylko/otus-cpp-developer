@@ -45,9 +45,6 @@ add_executable(async_cli main.cpp)
 
 target_link_libraries(async_cli async)
 
-install(TARGETS async_cli DESTINATION bin)
-install(TARGETS async LIBRARY DESTINATION lib
-        PUBLIC_HEADER DESTINATION include)
 # install(FILES async.h DESTINATION include)
 
 if(LINUX)
@@ -56,10 +53,13 @@ if(LINUX)
     # install(TARGETS async_cli RUNTIME DESTINATION bin COMPONENT async
     #                           LIBRARY DESTINATION lib COMPONENT async
     #                           ARCHIVE DESTINATION lib COMPONENT async)
-    # set(CPACK_GENERATOR DEB)
-    # set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
-    # set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
-    # set(CPACK_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
-    # set(CPACK_PACKAGE_CONTACT dmitriirylko@gmail.com)
-    # include(CPack)
+    install(TARGETS async_cli DESTINATION bin)
+    install(TARGETS async LIBRARY DESTINATION lib
+            PUBLIC_HEADER DESTINATION include)
+    set(CPACK_GENERATOR DEB)
+    set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
+    set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
+    set(CPACK_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
+    set(CPACK_PACKAGE_CONTACT dmitriirylko@gmail.com)
+    include(CPack)
 endif()

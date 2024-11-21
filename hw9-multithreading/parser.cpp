@@ -1,7 +1,10 @@
 #include "parser.h"
 
-Parser::Parser(const async::ConsoleQueueShared_t& queue, size_t packetSize) :
-    m_queue{queue},
+Parser::Parser(const async::ConsoleQueueShared_t& consoleQueue,
+               const async::FileQueueShared_t& fileQueue,
+               size_t packetSize) :
+    m_consoleQueue{consoleQueue},
+    m_fileQueue{fileQueue},
     m_defaultPacketSize{packetSize}
 {
     m_packet.reserve(m_defaultPacketSize);
@@ -61,8 +64,8 @@ void Parser::parse(const std::string& cmd)
         }
         if(m_packet.size())
         {
-            // notifyPacketReady();
             notifyConsolePacketReady();
+            notifyFilePacketReady();
         }
         m_packet.clear();
         return;
@@ -77,21 +80,22 @@ void Parser::parse(const std::string& cmd)
         {
             return;
         }
-        // notifyPacketReady();
         notifyConsolePacketReady();
+        notifyFilePacketReady();
         m_packet.clear();
         return;
 
     case CmdType::PAYLOAD:
         if(m_packet.size() == 0)
         {
-            // notifyPacketStarted();
+            std::time(&m_lastCmdRecvTime);
         }
         m_packet.push_back(cmd);
         if((m_packet.size() == m_defaultPacketSize) && (!m_nestingLevel))
         {
             // notifyPacketReady();
             notifyConsolePacketReady();
+            notifyFilePacketReady();
             m_packet.clear();
         }
         return;
@@ -107,6 +111,7 @@ void Parser::parse(const std::string& cmd)
         {
             // notifyPacketReady();
             notifyConsolePacketReady();
+            notifyFilePacketReady();
             m_packet.clear();
         }
         return;
@@ -118,14 +123,15 @@ void Parser::parse(const std::string& cmd)
 
 void Parser::notifyConsolePacketReady()
 {
-    auto queue = m_queue.lock();
+    auto queue = m_consoleQueue.lock();
     if(queue) queue->push(m_packet);
-
-    // m_queue.push(m_packet);
 }
 
 void Parser::notifyFilePacketReady()
-{}
+{
+    auto queue = m_fileQueue.lock();
+    if(queue) queue->push(FileLoggerCmd{m_lastCmdRecvTime, m_packet});
+}
 
 // void Parser::subscribePacketStarted(const std::shared_ptr<ISubscriber>& sub)
 // {

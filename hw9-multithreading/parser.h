@@ -8,6 +8,7 @@
 #include <stdexcept>
 
 #include "asyncdefs.h"
+#include "filelogger.h"
 
 enum class CmdType
 {
@@ -17,46 +18,20 @@ enum class CmdType
     END_DYNAMIC
 };
 
-// class ISubscriber
-// {
-// public:
-//     virtual void updatePacketReady(const std::vector<std::string>& cmdPack) = 0;
-//     virtual void updatePacketStarted()
-//     {}
-//     virtual ~ISubscriber() = default;
-// };
-
-// class IPublisher
-// {
-// public:
-//     virtual void subscribePacketStarted(const std::shared_ptr<ISubscriber>& sub) = 0;
-//     virtual void subscribePacketReady(const std::shared_ptr<ISubscriber>& sub) = 0;
-
-// protected:
-//     virtual void notifyPacketStarted() = 0;
-//     virtual void notifyPacketReady() = 0;
-//     ~IPublisher() = default;
-// };
-
-class Parser /*: public IPublisher*/
+class Parser
 {
 public:
-    Parser(const async::ConsoleQueueShared_t& queue, size_t packetSize);
-    // Parser(async::ConsoleQueue_t& queue, size_t packetSize);
+    Parser(const async::ConsoleQueueShared_t& consoleQueue,
+           const async::FileQueueShared_t& fileQueue,
+           size_t packetSize);
     
     ~Parser() = default;
     
     void receive(const char* data, size_t size);
-    
-    // void subscribePacketStarted(const std::shared_ptr<ISubscriber>& sub) override;
-    // void subscribePacketReady(const std::shared_ptr<ISubscriber>& sub) override;
-
-protected:
-    // void notifyPacketStarted() override;
 
 private:
-    async::ConsoleQueueWeak_t m_queue;
-    // async::ConsoleQueue_t& m_queue;
+    async::ConsoleQueueWeak_t m_consoleQueue;
+    async::FileQueueWeak_t m_fileQueue;
     
     /**
      * @brief Stores and assembles current cmd from characters.
@@ -72,14 +47,16 @@ private:
      * @brief Default (without of nesting) amount of cmds in packet.
      */
     size_t m_defaultPacketSize;
-
-    // std::list<std::weak_ptr<ISubscriber>> m_subsPacketStarted;
-    // std::list<std::weak_ptr<ISubscriber>> m_subsPacketReady;
     
     /**
      * @brief Current nesting level.
      */
     int m_nestingLevel = 0;
+
+    /**
+     * @brief Last cmd receive time.
+     */
+    std::time_t m_lastCmdRecvTime;
 
     /**
      * @brief Finds type of cmd: empty cmd interprets as EOF, curly braces as start
@@ -105,22 +82,3 @@ private:
      */
     void notifyFilePacketReady();
 };
-
-// class ICommand
-// {
-// public:
-//     virtual void execute() = 0;
-//     virtual ~ICommand() = default;
-// };
-
-// class ParseCommand : public ICommand
-// {
-// public:
-//     ParseCommand(const std::shared_ptr<Parser>& parser, const std::string& cmd);
-//     ~ParseCommand() = default;
-//     void execute() override;
-
-// private:
-//     std::weak_ptr<Parser> m_parser;
-//     std::string m_cmd;
-// };

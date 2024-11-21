@@ -18,7 +18,7 @@ void ConsoleLogger::updatePacketReady()
     {
         if(cnt == 0)
         {
-            std::cout << std::this_thread::get_id() << " bulk: " << cmd;
+            std::cout << "bulk: " << cmd;
         }
         else
         {

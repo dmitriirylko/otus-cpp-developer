@@ -14,6 +14,8 @@ add_library(async SHARED
     consolelogger.h
     waitingqueue.h
     asyncdefs.h
+    filelogger.cpp
+    filelogger.h
 )
 
 add_executable(async_cli main.cpp)

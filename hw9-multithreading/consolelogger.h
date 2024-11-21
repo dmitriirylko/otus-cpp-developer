@@ -18,6 +18,7 @@ public:
 private:
     void updatePacketReady();
     bool isContinue();
+    
     async::ConsoleQueueWeak_t m_queue;
     std::vector<std::string> m_cmdPack;
     std::thread m_thread;

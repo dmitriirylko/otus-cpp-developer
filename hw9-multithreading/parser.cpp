@@ -50,8 +50,6 @@ CmdType Parser::findType(const std::string& cmd)
 
 void Parser::parse(const std::string& cmd)
 {
-    // std::cout << cmd << std::endl;
-
     CmdType cmdType = findType(cmd);
     
     switch (cmdType)
@@ -93,7 +91,6 @@ void Parser::parse(const std::string& cmd)
         m_packet.push_back(cmd);
         if((m_packet.size() == m_defaultPacketSize) && (!m_nestingLevel))
         {
-            // notifyPacketReady();
             notifyConsolePacketReady();
             notifyFilePacketReady();
             m_packet.clear();
@@ -109,7 +106,6 @@ void Parser::parse(const std::string& cmd)
         }
         if(m_packet.size())
         {
-            // notifyPacketReady();
             notifyConsolePacketReady();
             notifyFilePacketReady();
             m_packet.clear();
@@ -132,45 +128,3 @@ void Parser::notifyFilePacketReady()
     auto queue = m_fileQueue.lock();
     if(queue) queue->push(FileLoggerCmd{m_lastCmdRecvTime, m_packet});
 }
-
-// void Parser::subscribePacketStarted(const std::shared_ptr<ISubscriber>& sub)
-// {
-//     m_subsPacketStarted.emplace_back(sub);
-// }
-
-// void Parser::subscribePacketReady(const std::shared_ptr<ISubscriber>& sub)
-// {
-//     m_subsPacketReady.emplace_back(sub);
-// }
-
-// void Parser::notifyPacketStarted()
-// {
-//     auto iter = m_subsPacketStarted.begin();
-//     while(iter != m_subsPacketStarted.end())
-//     {
-//         auto ptr = iter->lock();
-//         if(ptr)
-//         {
-//             ptr->updatePacketStarted();
-//             ++iter;
-//         }
-//         else
-//         {
-//             m_subsPacketReady.erase(iter++);
-//         }
-//     }
-// }
-
-// ParseCommand::ParseCommand(const std::shared_ptr<Parser>& parser, const std::string& cmd) :
-//     m_parser{parser},
-//     m_cmd{cmd}
-// {}
-
-// void ParseCommand::execute()
-// {
-//     auto ptr = m_parser.lock();
-//     if(ptr)
-//     {
-//         ptr->parse(m_cmd);
-//     }
-// }

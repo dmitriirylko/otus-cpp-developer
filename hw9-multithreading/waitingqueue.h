@@ -14,9 +14,7 @@ struct WaitingQueue
         m_headPtr{new Node},
         m_tailPtr{m_headPtr.get()},
         m_stopped{false}
-    {
-        std::cout << "Queue ctor" << std::endl;
-    }
+    {}
 
     WaitingQueue(const WaitingQueue&) = delete;
     WaitingQueue(WaitingQueue &&) = delete;
@@ -59,7 +57,7 @@ struct WaitingQueue
         std::lock_guard<std::mutex> lock1{m_headMutex};
         std::lock_guard<std::mutex> lock2{m_tailMutex};
         m_stopped = true;
-        m_conditional.notify_one();
+        m_conditional.notify_all();
     }
 
 private:
@@ -115,49 +113,3 @@ private:
     Node *m_tailPtr;
     bool m_stopped;
 };
-
-// void work_producer(WaitingQueue<int> &queue, std::atomic<bool> &stopFlag)
-// {
-//     std::cout << "Production started" << std::endl;
-//     for(int i = 0; i < 100; ++i)
-//     {
-//         std::cout << "produced: " << i << std::endl;
-//         if(!stopFlag) queue.push(i);
-//         else break;
-//         std::this_thread::sleep_for(std::chrono::milliseconds(10));
-//     }
-//     std::cout << "Production finished" << std::endl;
-// }
-
-// void work_consumer(WaitingQueue<int> &queue)
-// {
-//     int value = 0;
-//     std::cout << "Consume started" << std::endl;
-//     while(queue.pop(value))
-//     {
-//         std::cout << "consumed: " << value << std::endl;
-//     }
-//     std::cout << "Consume finished" << std::endl;
-// }
-
-// int main()
-// {
-//     std::atomic<bool> stopFlag{false};
-//     WaitingQueue<int> workQueue;
-
-//     std::thread producerThread{work_producer, std::ref(workQueue), std::ref(stopFlag)};
-//     std::thread consumerThread1{work_consumer, std::ref(workQueue)};
-//     std::thread consumerThread2{work_consumer, std::ref(workQueue)};
-
-//     std::this_thread::sleep_for(std::chrono::seconds(5));
-
-//     stopFlag = true;
-//     workQueue.stop();
-
-//     producerThread.join();
-//     consumerThread1.join();
-//     consumerThread2.join();
-
-
-//     return 0;
-// }

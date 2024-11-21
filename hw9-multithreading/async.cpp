@@ -21,11 +21,31 @@ std::list<std::unique_ptr<Parser>> m_contexts;
  */
 std::mutex mtxContext; 
 
+/**
+ * @brief Queues console packets.
+ */
 ConsoleQueueShared_t consoleQueue = std::make_shared<ConsoleQueue_t>();
+
+/**
+ * @brief Queues file packet structures that contains cmd packet itself and packet
+ *          acquisition time.
+ */
 FileQueueShared_t fileQueue = std::make_shared<FileQueue_t>();
 
+/**
+ * @brief Logs cmd packets to console in separate thread.
+ */
 ConsoleLogger consoleLogger(consoleQueue);
-FileLogger fileLogger{fileQueue};
+
+/**
+ * @brief Logs cmd packets to files in separate thread.
+ */
+FileLogger fileLogger1{fileQueue};
+
+/**
+ * @brief Logs cmd packets to files in separate thread.
+ */
+FileLogger fileLogger2{fileQueue};
 
 handle_t connect(std::size_t bulkSize)
 {

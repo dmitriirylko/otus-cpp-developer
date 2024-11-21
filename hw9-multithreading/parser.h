@@ -18,21 +18,45 @@ enum class CmdType
     END_DYNAMIC
 };
 
+/**
+ * @brief Parser class is responsible for managing context: receives data from external
+ *          context, parse it and put cmd packets to different queues for further processing.
+ */
 class Parser
 {
 public:
+    /**
+     * @brief Parser ctor.
+     * @param consoleQueue Shared_ptr to console queue for weak_ptr construction.
+     * @param fileQueue Shared_ptr to file queue for weak_ptr construction.
+     * @param packetSize Amount of cmds in packet.
+     */
     Parser(const async::ConsoleQueueShared_t& consoleQueue,
            const async::FileQueueShared_t& fileQueue,
            size_t packetSize);
-    
+
     ~Parser() = default;
-    
+
+    /**
+     * @brief Preliminary data processing. Iterates through data buffer and forms
+     *          cmds. Characters signaling about cmd ending are '\n' and '\0'.
+     * @note Method is not thread-safe. Caller should take responsible for synchronization.
+     * @param data Pointer to byte array.
+     * @param size Buffer size.
+     */
     void receive(const char* data, size_t size);
 
 private:
+    /**
+     * @brief Weak pointer to console queue.
+     */
     async::ConsoleQueueWeak_t m_consoleQueue;
+
+    /**
+     * @brief Weak pointer to file queue.
+     */
     async::FileQueueWeak_t m_fileQueue;
-    
+
     /**
      * @brief Stores and assembles current cmd from characters.
      */
@@ -47,7 +71,7 @@ private:
      * @brief Default (without of nesting) amount of cmds in packet.
      */
     size_t m_defaultPacketSize;
-    
+
     /**
      * @brief Current nesting level.
      */
@@ -65,7 +89,7 @@ private:
      * @return Cmd type.
      */
     CmdType findType(const std::string& cmd);
-    
+
     /**
      * @brief Makes decisions about current cmd: accumulate cmd to packet, start/stop accumulation.
      * @param cmd Cmd.

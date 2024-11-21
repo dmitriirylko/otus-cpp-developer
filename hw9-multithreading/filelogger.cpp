@@ -9,8 +9,12 @@ FileLogger::FileLogger(const std::shared_ptr<WaitingQueue<FileLoggerCmd>>& queue
 
 void FileLogger::updatePacketReady()
 {
+    m_stringStream << std::this_thread::get_id();
+
     std::string filename = "bulk" +
                            std::to_string(m_cmd.recvTime) +
+                           "-" +
+                           m_stringStream.str() +
                            "-" +
                            std::to_string(m_counter) +
                            ".log";

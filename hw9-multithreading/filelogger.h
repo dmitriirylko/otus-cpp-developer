@@ -2,6 +2,7 @@
 
 #include <ctime>
 #include <fstream>
+#include <sstream>
 #include <thread>
 
 #include "asyncdefs.h"
@@ -21,12 +22,13 @@ public:
     void updatePacketReady();
 
 private:
+    void process();
+    bool isContinue();
+
     std::ofstream m_fileStream;
+    std::stringstream m_stringStream;
     FileLoggerCmd m_cmd;
     std::weak_ptr<WaitingQueue<FileLoggerCmd>> m_queue;
     std::thread m_thread;
     size_t m_counter;
-
-    void process();
-    bool isContinue();
 };

@@ -21,7 +21,6 @@ endif()
 message("Version is \"${PROJECT_VERSION}\".")
 
 project(async VERSION ${PROJECT_VERSION})
-# project(async)
 
 set(CMAKE_CXX_FLAGS -pthread)
 set(CMAKE_CXX_STANDARD 17)
@@ -45,14 +44,9 @@ add_executable(async_cli main.cpp)
 
 target_link_libraries(async_cli async)
 
-# install(FILES async.h DESTINATION include)
-
 if(LINUX)
 # -- install command was introduced in 3.15 version of cmake
 # -- we can use sudo make install from build folder
-    # install(TARGETS async_cli RUNTIME DESTINATION bin COMPONENT async
-    #                           LIBRARY DESTINATION lib COMPONENT async
-    #                           ARCHIVE DESTINATION lib COMPONENT async)
     install(TARGETS async_cli DESTINATION bin)
     install(TARGETS async LIBRARY DESTINATION lib
             PUBLIC_HEADER DESTINATION include)

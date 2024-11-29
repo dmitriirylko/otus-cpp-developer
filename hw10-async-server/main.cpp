@@ -2,52 +2,24 @@
 #include <thread>
 #include <cstddef>
 
-#include <boost/program_options.hpp>
-
 #include "async.h"
+#include "options.h"
 
 int main(int argc, char** argv)
 {
-    boost::program_options::options_description desc;
-    desc.add_options()
-    ("unnamed", boost::program_options::value<std::vector<size_t>>(), "unnamed");
-
-    boost::program_options::positional_options_description pos_desc;
-    pos_desc.add("unnamed", 2);
-
-    boost::program_options::variables_map vm;
-
-    try
-    {
-        if(argc == 1)
-        {
-            throw std::invalid_argument("Incorrect number of input parameters");
-        }
-        
-        boost::program_options::store(boost::program_options::command_line_parser(argc, argv).
-                                                              options(desc).
-                                                              positional(pos_desc).
-                                                              run(), vm);
-        boost::program_options::notify(vm);
-        if(vm["unnamed"].as<std::vector<size_t>>().size() != 2) {
-            throw std::invalid_argument("Incorrect number of input parameters");
-        }
+    try {
+        Options options{argc, argv};
+        std::cout << options.getHost() << ", " << options.getBulkSize() << std::endl;
     }
-    catch (boost::program_options::error& e)
-    {
+    catch (const boost::program_options::error& e) {
         std::cout << "Program options failed. Error: " << e.what() << std::endl;
         return 1;
     }
-    catch (const std::invalid_argument& e)
-    {
+    catch (const std::invalid_argument& e) {
         std::cout << "Program options failed. Error: " << e.what() << std::endl;
         return 1;
     }
 
-    size_t host(vm["unnamed"].as<std::vector<size_t>>()[0]);
-    size_t bulkSize(vm["unnamed"].as<std::vector<size_t>>()[1]);
-
-    std::cout << host << ", " << bulkSize << std::endl;
 
     // std::size_t bulk = 5;
     // auto h = async::connect(bulk);

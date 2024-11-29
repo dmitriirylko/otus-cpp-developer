@@ -46,7 +46,10 @@ add_library(async SHARED
 
 set_target_properties(async PROPERTIES PUBLIC_HEADER async.h)
 
-add_executable(bulk_server main.cpp)
+add_executable(bulk_server
+    main.cpp
+    options.h
+)
 
 target_include_directories(bulk_server PUBLIC ${Boost_INCLUDE_DIRS})
 target_link_libraries(bulk_server async Boost::program_options Boost::system)

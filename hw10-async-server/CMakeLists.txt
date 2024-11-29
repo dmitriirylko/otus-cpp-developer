@@ -4,6 +4,7 @@ set(CMAKE_CXX_FLAGS -pthread)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_INSTALL_PREFIX /usr/)
 
+
 find_package(Git)
 
 if(GIT_EXECUTABLE)
@@ -49,6 +50,8 @@ set_target_properties(async PROPERTIES PUBLIC_HEADER async.h)
 add_executable(bulk_server
     main.cpp
     options.h
+    asyncserver.cpp
+    asyncserver.h
 )
 
 target_include_directories(bulk_server PUBLIC ${Boost_INCLUDE_DIRS})

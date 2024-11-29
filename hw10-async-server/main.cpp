@@ -2,14 +2,16 @@
 #include <thread>
 #include <cstddef>
 
-#include "async.h"
 #include "options.h"
+#include "asyncserver.h"
 
 int main(int argc, char** argv)
 {
     try {
         Options options{argc, argv};
-        std::cout << options.getHost() << ", " << options.getBulkSize() << std::endl;
+        boost::asio::io_context io_context;
+        Server server{io_context, options.getHost(), options.getBulkSize()};
+        io_context.run();
     }
     catch (const boost::program_options::error& e) {
         std::cout << "Program options failed. Error: " << e.what() << std::endl;
@@ -19,7 +21,6 @@ int main(int argc, char** argv)
         std::cout << "Program options failed. Error: " << e.what() << std::endl;
         return 1;
     }
-
 
     // std::size_t bulk = 5;
     // auto h = async::connect(bulk);

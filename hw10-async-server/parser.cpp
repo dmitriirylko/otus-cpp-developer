@@ -56,16 +56,16 @@ void Parser::parse(const std::string& cmd)
     {
     case CmdType::START_DYNAMIC:
         ++m_nestingLevel;
-        if(m_nestingLevel > 1)
-        {
-            return;
-        }
-        if(m_packet.size())
-        {
-            notifyConsolePacketReady();
-            notifyFilePacketReady();
-        }
-        m_packet.clear();
+        // if(m_nestingLevel > 1)
+        // {
+        //     return;
+        // }
+        // if(m_packet.size())
+        // {
+        //     notifyConsolePacketReady(QueuePackType::MIXED);
+        //     notifyFilePacketReady(QueuePackType::MIXED);
+        // }
+        // m_packet.clear();
         return;
 
     case CmdType::END_DYNAMIC:
@@ -78,22 +78,33 @@ void Parser::parse(const std::string& cmd)
         {
             return;
         }
-        notifyConsolePacketReady();
-        notifyFilePacketReady();
-        m_packet.clear();
+        notifyConsolePacketReady(QueuePackType::NESTING);
+        notifyFilePacketReady(QueuePackType::NESTING);
+        m_packetNesting.clear();
         return;
 
     case CmdType::PAYLOAD:
-        if(m_packet.size() == 0)
+        if(m_nestingLevel)
         {
-            std::time(&m_lastCmdRecvTime);
+            if(m_packetNesting.size() == 0)
+            {
+                std::time(&m_lastCmdRecvTimeNesting);
+            }
+            m_packetNesting.push_back(cmd);
         }
-        m_packet.push_back(cmd);
-        if((m_packet.size() == m_defaultPacketSize) && (!m_nestingLevel))
+        else
         {
-            notifyConsolePacketReady();
-            notifyFilePacketReady();
-            m_packet.clear();
+            if(m_packet.size() == 0)
+            {
+                std::time(&m_lastCmdRecvTime);
+            }
+            m_packet.push_back(cmd);
+            if((m_packet.size() == m_defaultPacketSize) /* && (!m_nestingLevel) */)
+            {
+                notifyConsolePacketReady(QueuePackType::MIXED);
+                notifyFilePacketReady(QueuePackType::MIXED);
+                m_packet.clear();
+            }
         }
         return;
 
@@ -106,8 +117,8 @@ void Parser::parse(const std::string& cmd)
         }
         if(m_packet.size())
         {
-            notifyConsolePacketReady();
-            notifyFilePacketReady();
+            notifyConsolePacketReady(QueuePackType::MIXED);
+            notifyFilePacketReady(QueuePackType::MIXED);
             m_packet.clear();
         }
         return;
@@ -117,14 +128,40 @@ void Parser::parse(const std::string& cmd)
     }
 }
 
-void Parser::notifyConsolePacketReady()
+void Parser::notifyConsolePacketReady(QueuePackType type)
 {
     auto queue = m_consoleQueue.lock();
-    if(queue) queue->push(m_packet);
+    switch (type)
+    {
+    case QueuePackType::NESTING:
+        if(queue) queue->push(m_packetNesting);
+        break;
+    
+    case QueuePackType::MIXED:
+        if(queue) queue->push(m_packet);
+        break;
+
+    default:
+        assert(false && "THere is no such QueuePackType type.");
+        break;
+    }
 }
 
-void Parser::notifyFilePacketReady()
+void Parser::notifyFilePacketReady(QueuePackType type)
 {
     auto queue = m_fileQueue.lock();
-    if(queue) queue->push(FileLoggerCmd{m_lastCmdRecvTime, m_packet});
+    switch (type)
+    {
+    case QueuePackType::NESTING:
+        if(queue) queue->push(FileLoggerCmd{m_lastCmdRecvTime, m_packetNesting});
+        break;
+    
+    case QueuePackType::MIXED:
+        if(queue) queue->push(FileLoggerCmd{m_lastCmdRecvTime, m_packet});
+        break;
+
+    default:
+        assert(false && "THere is no such QueuePackType type.");
+        break;
+    }
 }

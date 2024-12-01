@@ -6,6 +6,7 @@
 #include <memory>
 #include <list>
 #include <stdexcept>
+#include <cassert>
 
 #include "asyncdefs.h"
 #include "filelogger.h"
@@ -16,6 +17,12 @@ enum class CmdType
     END_OF_FILE,
     START_DYNAMIC,
     END_DYNAMIC
+};
+
+enum class QueuePackType
+{
+    NESTING,
+    MIXED
 };
 
 /**
@@ -33,7 +40,7 @@ public:
      */
     Parser(const async::ConsoleQueueShared_t& consoleQueue,
            const async::FileQueueShared_t& fileQueue,
-           size_t packetSize);
+           std::size_t packetSize);
 
     ~Parser() = default;
 
@@ -63,10 +70,16 @@ private:
     std::string m_currentCmd;
 
     /**
-     * @brief Stores and assembles current cmd packet.
+     * @brief Stores and assembles current cmd packet. Cmds are mixed between
+     *          parsers (contexts).
      */
-    std::vector<std::string> m_packet;
-
+    inline static std::vector<std::string> m_packet;
+    
+    /**
+     * @brief Stores and assembles current cmd packet in nesting case.
+     */
+    std::vector<std::string> m_packetNesting;
+    
     /**
      * @brief Default (without of nesting) amount of cmds in packet.
      */
@@ -80,7 +93,9 @@ private:
     /**
      * @brief Last cmd receive time.
      */
-    std::time_t m_lastCmdRecvTime;
+    inline static std::time_t m_lastCmdRecvTime;
+
+    std::time_t m_lastCmdRecvTimeNesting;
 
     /**
      * @brief Finds type of cmd: empty cmd interprets as EOF, curly braces as start
@@ -99,10 +114,10 @@ private:
     /**
      * @brief Notifies console logger thread that cmd packet is ready.
      */
-    void notifyConsolePacketReady();
+    void notifyConsolePacketReady(QueuePackType type);
 
     /**
      * @brief Notifies file logger threads that cmd packet is ready.
      */
-    void notifyFilePacketReady();
+    void notifyFilePacketReady(QueuePackType type);
 };

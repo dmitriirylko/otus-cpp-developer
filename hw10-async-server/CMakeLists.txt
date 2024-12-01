@@ -23,13 +23,12 @@ endif()
 
 message("Version is \"${PROJECT_VERSION}\".")
 
-# project(bulk_server VERSION ${PROJECT_VERSION})
-project(bulk_server)
+project(bulk_server VERSION ${PROJECT_VERSION})
 
 set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
-# find_package(Boost 1.45.0 COMPONENTS program_options system REQUIRED)
+
 find_package(Boost 1.45.0 COMPONENTS program_options system REQUIRED)
 
 add_library(async SHARED

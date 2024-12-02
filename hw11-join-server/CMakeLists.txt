@@ -44,6 +44,7 @@ add_executable(${CMAKE_PROJECT_NAME}
     parser.cpp
     dbmanager.cpp
     dbmanager.h
+    errorcode.h
 )
 
 target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC ${Boost_INCLUDE_DIRS})

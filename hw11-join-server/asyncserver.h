@@ -7,6 +7,7 @@
 
 #include "parser.h"
 #include "dbmanager.h"
+#include "errorcode.h"
 
 class Session : public std::enable_shared_from_this<Session>
 {
@@ -35,29 +36,38 @@ private:
     {
         std::shared_ptr<Session> selfPtr{shared_from_this()};
         m_socket.async_read_some(boost::asio::buffer(m_buf, BUF_SIZE),
-            [this, selfPtr](boost::system::error_code ec, std::size_t length){
-                if(!ec)
+        [this, selfPtr](boost::system::error_code ec, std::size_t length){
+            if(!ec)
+            {
+                std::cout << "Received " << length << " bytes from " <<
+                m_socket.remote_endpoint() << " : ";
+                std::cout.write(m_buf, length);
+                std::tie(m_res, m_errorMsg) = m_parser.process(m_buf, length, m_cmdTokens);
+                switch(m_res)
                 {
-                    std::cout << "Received " << length << " bytes from " <<
-                    m_socket.remote_endpoint() << " : ";
-                    std::cout.write(m_buf, length);
-                    std::tie(m_res, m_errorMsg) = m_parser.process(m_buf, length);
-                    if(m_res == ParserErrorCode::SKIP) read();
-                    else
-                    {
-                        // m_dbManager->execute();
-                        write();
-                    }
+                case ErrorCode::SKIP:
+                    read();
+                    break;
+                
+                case ErrorCode::ERROR:
+                    write();
+                    break;
+                    
+                default:
+                    std::tie(m_res, m_errorMsg) = m_dbManager->execute(m_res, m_cmdTokens);
+                    write();
+                    break;
                 }
-            });
+            }
+        });
     }
 
     void write()
     {
         auto self(shared_from_this());
         std::string msg;
-        if(m_res == ParserErrorCode::OK) msg = "< OK\n";
-        else msg = "< ERR " + m_errorMsg + "\n";
+        if(m_res == ErrorCode::ERROR) msg = "< ERR " + m_errorMsg + "\n";
+        else  msg = "< OK\n";
         boost::asio::async_write(m_socket, boost::asio::buffer(msg, msg.length()),
             [this, self](boost::system::error_code ec, std::size_t){
                 if(!ec)
@@ -70,9 +80,11 @@ private:
     boost::asio::ip::tcp::socket m_socket;
     char m_buf[BUF_SIZE];
     Parser m_parser;
-    ParserErrorCode m_res;
+    ErrorCode m_res;
+    DbErrorCode m_resDb;
     std::string m_errorMsg;
     std::unique_ptr<DbManager> m_dbManager;
+    std::vector<std::string> m_cmdTokens;
 };
 
 class Server

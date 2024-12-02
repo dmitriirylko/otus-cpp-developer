@@ -64,6 +64,7 @@ public:
         m_acceptor{io_context, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)},
         m_bulkSize{bulkSize}
     {
+        std::cout << "Server on port " << port << " started. Waiting connections..." << std::endl;
         accept();
     }
 

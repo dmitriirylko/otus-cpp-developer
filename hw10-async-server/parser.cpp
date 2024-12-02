@@ -99,7 +99,7 @@ void Parser::parse(const std::string& cmd)
                 std::time(&m_lastCmdRecvTime);
             }
             m_packet.push_back(cmd);
-            if((m_packet.size() == m_defaultPacketSize) /* && (!m_nestingLevel) */)
+            if((m_packet.size() == m_defaultPacketSize))
             {
                 notifyConsolePacketReady(QueuePackType::MIXED);
                 notifyFilePacketReady(QueuePackType::MIXED);

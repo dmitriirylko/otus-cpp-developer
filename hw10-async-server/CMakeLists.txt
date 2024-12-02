@@ -49,7 +49,6 @@ set_target_properties(async PROPERTIES PUBLIC_HEADER async.h)
 add_executable(bulk_server
     main.cpp
     options.h
-    asyncserver.cpp
     asyncserver.h
 )
 

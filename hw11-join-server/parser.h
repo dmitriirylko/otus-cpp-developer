@@ -5,20 +5,7 @@
 #include <tuple>
 #include <map>
 
-enum class ParserErrorCode
-{
-    OK,
-    ERROR,
-    SKIP
-};
-
-enum class CmdType
-{
-    INSERT,
-    TRUNCATE,
-    INTERSECTION,
-    SYMMETRIC_DIFFERENCE
-};
+#include "errorcode.h"
 
 class Parser
 {
@@ -26,14 +13,15 @@ public:
 
     Parser() = default;
     ~Parser() = default;
-    std::tuple<ParserErrorCode, std::string> process(const char* data, size_t length);
+    std::tuple<ErrorCode, std::string> process(const char* data,
+                                                     size_t length,
+                                                     std::vector<std::string> &cmdTokens);
 
 private:
-    std::string parse();
+    std::tuple<ErrorCode, std::string> parse(std::vector<std::string> &cmdTokens);
     std::string m_currentCmd;
-    std::vector<std::string> m_cmdTokens;
-    std::map<std::string, CmdType> m_cmdTypes = {{"insert", CmdType::INSERT},
-                                                 {"truncate", CmdType::TRUNCATE},
-                                                 {"intersection", CmdType::INTERSECTION},
-                                                 {"symmetric_difference", CmdType::SYMMETRIC_DIFFERENCE}};
+    std::map<std::string, ErrorCode> m_cmdTypes = {{"insert", ErrorCode::INSERT},
+                                                    {"truncate", ErrorCode::TRUNCATE},
+                                                    {"intersection", ErrorCode::INTERSECTION},
+                                                    {"symmetric_difference", ErrorCode::SYMMETRIC_DIFFERENCE}};
 };

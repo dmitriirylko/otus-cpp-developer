@@ -11,17 +11,18 @@ namespace ErrorMsgs
     constexpr const char* INVALID_ARGUMENTS_AMOUNT = "invalid arguments amount";
 };
 
-std::tuple<ParserErrorCode, std::string> Parser::process(const char* data, size_t length)
+std::tuple<ErrorCode, std::string> Parser::process(const char* data,
+                                                    size_t length,
+                                                    std::vector<std::string> &cmdTokens)
 {
     for(size_t i = 0; i < length; ++i)
     {
         /* End of cmd. */
         if(data[i] == '\n' || data[i] == '\0')
         {
-            std::string errorMsg = parse();
+            auto res = parse(cmdTokens);
             m_currentCmd.clear();
-            if(errorMsg.empty()) return {ParserErrorCode::OK, ""};
-            else return {ParserErrorCode::ERROR, std::move(errorMsg)};
+            return res;
         }
         /* Append character to cmd. */
         else
@@ -29,44 +30,45 @@ std::tuple<ParserErrorCode, std::string> Parser::process(const char* data, size_
             m_currentCmd.push_back(data[i]);
         }
     }
-    return {ParserErrorCode::SKIP, ""};
+    return {ErrorCode::SKIP, ""};
 }
 
-std::string Parser::parse()
+std::tuple<ErrorCode, std::string> Parser::parse(std::vector<std::string> &cmdTokens)
 {
-    m_cmdTokens.clear();
+    cmdTokens.clear();
     std::istringstream iss(m_currentCmd);
     std::string s;
 
-    while(getline(iss, s, ' ')) m_cmdTokens.push_back(s);
+    while(getline(iss, s, ' ')) cmdTokens.push_back(s);
     
-    for_each(m_cmdTokens[0].begin(), m_cmdTokens[0].end(), [](char& c){
-        c = tolower(c);
+    std::string firstToken;
+    for_each(cmdTokens[0].begin(), cmdTokens[0].end(), [&firstToken](char& c){
+        firstToken.push_back(tolower(c));
     });
 
-    CmdType cmdType;
+    ErrorCode cmdType;
     try
     {
         /* Throws std::out_of_range if there is no such element in map, i.e. cmd is invalid. */
-        cmdType =  m_cmdTypes.at(m_cmdTokens[0]);
+        cmdType =  m_cmdTypes.at(firstToken);
         /* Check number of passed arguments. If arguments amount doesn't match particular command
            then throw std::invalid_argument. */
         switch (cmdType)
         {
-        case CmdType::INSERT:
-            if(m_cmdTokens.size() != 4) throw std::invalid_argument(ErrorMsgs::INVALID_ARGUMENTS_AMOUNT);
+        case ErrorCode::INSERT:
+            if(cmdTokens.size() != 4) throw std::invalid_argument(ErrorMsgs::INVALID_ARGUMENTS_AMOUNT);
             break;
 
-        case CmdType::TRUNCATE:
-            if(m_cmdTokens.size() != 2) throw std::invalid_argument(ErrorMsgs::INVALID_ARGUMENTS_AMOUNT);
+        case ErrorCode::TRUNCATE:
+            if(cmdTokens.size() != 2) throw std::invalid_argument(ErrorMsgs::INVALID_ARGUMENTS_AMOUNT);
             break;
 
-        case CmdType::INTERSECTION:
-            if(m_cmdTokens.size() != 1) throw std::invalid_argument(ErrorMsgs::INVALID_ARGUMENTS_AMOUNT);
+        case ErrorCode::INTERSECTION:
+            if(cmdTokens.size() != 1) throw std::invalid_argument(ErrorMsgs::INVALID_ARGUMENTS_AMOUNT);
             break;
 
-        case CmdType::SYMMETRIC_DIFFERENCE:
-            if(m_cmdTokens.size() != 1) throw std::invalid_argument(ErrorMsgs::INVALID_ARGUMENTS_AMOUNT);
+        case ErrorCode::SYMMETRIC_DIFFERENCE:
+            if(cmdTokens.size() != 1) throw std::invalid_argument(ErrorMsgs::INVALID_ARGUMENTS_AMOUNT);
             break;
 
         default:
@@ -75,12 +77,12 @@ std::string Parser::parse()
     }
     catch(const std::out_of_range &e)
     {
-        return ErrorMsgs::INVALID_CMD_TYPE;
+        return {ErrorCode::ERROR, ErrorMsgs::INVALID_CMD_TYPE};
     }
     catch(const std::invalid_argument &e)
     {
-        return e.what();
+        return {ErrorCode::ERROR, e.what()};
     }
     
-    return "";
+    return {cmdType, ""};
 }

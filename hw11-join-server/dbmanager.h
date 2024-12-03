@@ -24,6 +24,7 @@ public:
 
 private:
     std::string makeQuery(ErrorCode &cmd, std::vector<std::string> &cmdTokens);
+    
     const char* m_dbName;
     sqlite3* m_handle;
 };

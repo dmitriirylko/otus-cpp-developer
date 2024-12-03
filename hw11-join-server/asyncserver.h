@@ -67,6 +67,7 @@ private:
         auto self(shared_from_this());
         std::string msg;
         if(m_res == ErrorCode::ERROR) msg = "< ERR " + m_errorMsg + "\n";
+        else if(m_res == ErrorCode::LOAD) msg = m_errorMsg + "\n< OK\n";
         else  msg = "< OK\n";
         boost::asio::async_write(m_socket, boost::asio::buffer(msg, msg.length()),
             [this, self](boost::system::error_code ec, std::size_t){

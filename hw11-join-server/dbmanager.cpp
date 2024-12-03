@@ -25,34 +25,51 @@ DbManager::~DbManager()
 }
 
 std::tuple<ErrorCode, std::string> DbManager::execute(ErrorCode cmd,
-                                                        std::vector<std::string> &cmdTokens)
+                                                      std::vector<std::string> &cmdTokens)
 {
     std::string query = makeQuery(cmd, cmdTokens);
-    // int columns;
-    // char **data;
-    // char **names;
-    auto print_results = [](void*, int columns, char **data, char **names) -> int {
-        for(int i = 0; i < columns; ++i)
+
+    auto print_results = [](void *load, int rows, char **data, char **names) -> int {
+        std::string *sp = static_cast<std::string*>(load);
+        sp->append(std::string("< "));
+        for(int i = 0; i < rows; ++i)
         {
             std::cout << names[i] << " = " << (data[i] ? data[i] : "NULL") << std::endl;
+            if(strcmp(names[i], "id") != 0)
+            {
+                sp->append(data[i]);
+                sp->push_back(',');
+            }
+            else
+            {
+                if(i)
+                {
+                    sp->push_back('\n');
+                    sp->append("< ");
+                }
+                
+                sp->append(data[i]);
+                sp->push_back(',');
+            }
         }
         std::cout << std::endl;
         return 0;
     };
 
-    char *errmsg;
-    int rc = sqlite3_exec(m_handle, query.c_str(), print_results, 0, &errmsg);
+    char *errMsg;
+    std::string execLoad;
+    int rc = sqlite3_exec(m_handle, query.c_str(), print_results, &execLoad, &errMsg);
     if(rc != SQLITE_OK)
     {
-        std::cout << "Can not execute query: " << errmsg << std::endl;
-        sqlite3_free(errmsg);
+        std::cout << "Can not execute query: " << errMsg << std::endl;
+        std::string errStr(errMsg);
+        sqlite3_free(errMsg);
         sqlite3_close(m_handle);
-        std::stringstream ss;
-        ss << errmsg;
-        auto len = strlen(errmsg);
-        std::string retStr(errmsg);
-        std::string retStr1(ss.str());
-        return {ErrorCode::ERROR, std::string(errmsg)};
+        return {ErrorCode::ERROR, errStr};
+    }
+    else if(!execLoad.empty())
+    {
+        return {ErrorCode::LOAD, std::move(execLoad)};
     }
     return {ErrorCode::OK, ""};
 }
@@ -76,11 +93,15 @@ std::string DbManager::makeQuery(ErrorCode &cmd, std::vector<std::string> &cmdTo
         break;
 
     case ErrorCode::TRUNCATE:
-        /* code */
+        queryLength = snprintf(NULL, 0, "DELETE FROM %s;VACUUM",
+                                cmdTokens[1].c_str()) + 1;
+        query = std::string(queryLength, 0x00);
+        snprintf(&query[0], queryLength, "DELETE FROM %s;VACUUM",
+                    cmdTokens[1].c_str());
         break;
 
     case ErrorCode::INTERSECTION:
-        /* code */
+        query = "SELECT A.id, A.name, B.name FROM A, B where A.id = B.id;";
         break;
 
     case ErrorCode::SYMMETRIC_DIFFERENCE:

@@ -8,5 +8,6 @@ enum class ErrorCode
     SYMMETRIC_DIFFERENCE,
     OK,
     ERROR,
-    SKIP
+    SKIP,
+    LOAD
 };

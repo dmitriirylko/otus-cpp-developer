@@ -21,14 +21,13 @@ endif()
 
 message("Version is \"${PROJECT_VERSION}\".")
 
-# project(bulk_server VERSION ${PROJECT_VERSION})
-project(join_server)
+project(join_server VERSION ${PROJECT_VERSION})
+# project(join_server)
 
 set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
 
-# find_package(Boost 1.45.0 COMPONENTS program_options system REQUIRED)
 find_package(Boost 1.45.0 COMPONENTS system REQUIRED)
 
 set(SQLITE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external")

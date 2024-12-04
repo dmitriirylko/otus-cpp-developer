@@ -21,10 +21,11 @@ public:
     ~DbManager();
     std::tuple<ErrorCode, std::string> execute(ErrorCode cmd,
                                                  std::vector<std::string> &cmdTokens);
+    void create();
 
 private:
     std::string makeQuery(ErrorCode &cmd, std::vector<std::string> &cmdTokens);
-    
+
     const char* m_dbName;
     sqlite3* m_handle;
 };

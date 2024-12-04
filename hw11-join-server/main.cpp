@@ -2,6 +2,7 @@
 #include <string>
 
 #include "asyncserver.h"
+#include "dbmanager.h"
 
 int main(int argc, char** argv)
 {
@@ -15,6 +16,10 @@ int main(int argc, char** argv)
     std::stringstream sstream(argv[1]);
     sstream >> port;
     Server server{io_context, port};
+    {
+        DbManager dbManager;
+        dbManager.create();
+    }
     io_context.run();
 
     return 0;

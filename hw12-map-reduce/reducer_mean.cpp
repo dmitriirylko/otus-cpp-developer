@@ -1,7 +1,6 @@
 #include <iostream>
 #include <string>
 
-
 int main(int argc, char ** argv)
 {
     size_t cnt = 0;
@@ -13,7 +12,6 @@ int main(int argc, char ** argv)
         try
         {
             price = std::stod(line);
-            std::cout << cnt << ", " << price << std::endl;
             sum += price;
             ++cnt;
         }
@@ -21,7 +19,6 @@ int main(int argc, char ** argv)
         {}
     }
     double meanPrice = sum / cnt;
-    std::cout << "Mean price = " << meanPrice << "$" << std::endl;
-    std::cout << "Items processed = " << cnt << std::endl;
+    std::cout << meanPrice;
     return 0;
 }

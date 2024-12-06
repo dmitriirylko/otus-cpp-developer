@@ -6,12 +6,10 @@
 int main(int argc, char ** argv)
 {
     std::string line;
-    std::string subStr;
-    size_t globCnt = 0;
     while(std::getline(std::cin, line))
     {
-        // try
-        // {
+        try
+        {
             size_t cnt = 0;
             std::string csvItem;
             for(size_t i = 0; i < line.size(); ++i)
@@ -20,6 +18,7 @@ int main(int argc, char ** argv)
                 {
                     if(cnt == 9)
                     {
+                        std::stod(csvItem);
                         std::cout << csvItem << std::endl;
                     }
                     csvItem.clear();
@@ -30,9 +29,9 @@ int main(int argc, char ** argv)
                     csvItem.push_back(line[i]);
                 }
             }
-        // }
-        // catch(...)
-        // {}
+        }
+        catch(...)
+        {}
     }
 
     return 0;

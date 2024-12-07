@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <cmath>
+#include <iomanip>
 
 int main(int argc, char ** argv)
 {
@@ -42,7 +43,7 @@ int main(int argc, char ** argv)
                     {
                         inputValue = std::stod(csvItem);
                         outputValue = pow(inputValue - mean, 2);
-                        std::cout << outputValue << std::endl;
+                        std::cout << std::setprecision(15) << outputValue << std::endl;
                     }
                     csvItem.clear();
                     ++cnt;

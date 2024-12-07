@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <iomanip>
 
 int main(int argc, char ** argv)
 {
@@ -19,6 +20,6 @@ int main(int argc, char ** argv)
         {}
     }
     double meanPrice = sum / cnt;
-    std::cout << meanPrice;
+    std::cout << std::setprecision(15) << meanPrice;
     return 0;
 }

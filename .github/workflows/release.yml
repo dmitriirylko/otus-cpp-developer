@@ -22,7 +22,7 @@ jobs:
       - run: sudo apt install curl
       - run: FILENAME=libtensorflow-cpu-linux-x86_64.tar.gz
       - run: curl -L -O https://storage.googleapis.com/tensorflow/versions/2.18.0/libtensorflow-cpu-linux-x86_64.tar.gz
-      - run: sudo tar -C /usr/local -xzf ${FILENAME}
+      - run: sudo tar -C /usr/local -xzf libtensorflow-cpu-linux-x86_64.tar.gz
       - run: sudo ldconfig /usr/local/lib
       - run: cmake ./hw13-ml-inference
       - run: cmake --build .

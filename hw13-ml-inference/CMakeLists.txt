@@ -21,15 +21,40 @@ endif()
 
 message("Version is \"${PROJECT_VERSION}\".")
 
-# project(join_server VERSION ${PROJECT_VERSION})
-project(ml_inference)
+project(fashio_mnist VERSION ${PROJECT_VERSION})
+# project(fashio_mnist)
 
-add_executable(${CMAKE_PROJECT_NAME}
+add_executable(fashio_mnist
     main.cpp
+    tfclassifier.h
+    tfclassifier.cpp
+    helpers.cpp
+    helpers.h
 )
 
-target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC include)
-target_link_libraries(${CMAKE_PROJECT_NAME} tensorflow)
+target_include_directories(fashio_mnist PUBLIC include)
+target_link_libraries(fashio_mnist tensorflow)
+
+find_package(GTest)
+
+add_executable(test_fashio_mnist
+    test/tftest.cpp
+    helpers.cpp
+    helpers.h
+    tfclassifier.h
+    tfclassifier.cpp
+)
+
+target_include_directories(test_fashio_mnist PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
+
+set_target_properties(test_fashio_mnist PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+)
+
+include_directories(${GTEST_INCLUDE_DIRS}) 
+
+target_link_libraries(test_${CMAKE_PROJECT_NAME} gmock gtest pthread tensorflow)
 
 if(LINUX)
 # -- install command was introduced in 3.15 version of cmake

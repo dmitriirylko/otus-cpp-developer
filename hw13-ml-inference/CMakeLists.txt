@@ -67,3 +67,8 @@ if(LINUX)
     set(CPACK_PACKAGE_CONTACT dmitriirylko@gmail.com)
     include(CPack)
 endif()
+
+
+enable_testing()
+add_test(test_fashio_mnist test_fashio_mnist)
+

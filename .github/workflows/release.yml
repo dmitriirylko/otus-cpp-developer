@@ -20,12 +20,14 @@ jobs:
           submodules: true
       - run: sudo apt update
       - run: sudo apt install curl
+      - run: sudo apt-get install libgtest-dev libgmock-dev && sudo apt-get install libtbb-dev
       - run: FILENAME=libtensorflow-cpu-linux-x86_64.tar.gz
       - run: curl -L -O https://storage.googleapis.com/tensorflow/versions/2.18.0/libtensorflow-cpu-linux-x86_64.tar.gz
       - run: sudo tar -C /usr/local -xzf libtensorflow-cpu-linux-x86_64.tar.gz
       - run: sudo ldconfig /usr/local/lib
       - run: cmake ./hw13-ml-inference
       - run: cmake --build .
+      - run: cmake --build . --target test
       - run: cmake --build . --target package
       - name: Create Release
         id: create_release

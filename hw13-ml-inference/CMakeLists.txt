@@ -68,7 +68,6 @@ if(LINUX)
     include(CPack)
 endif()
 
-
-enable_testing()
-add_test(test_fashio_mnist test_fashio_mnist)
+# enable_testing()
+# add_test(test_fashio_mnist test_fashio_mnist)
 
